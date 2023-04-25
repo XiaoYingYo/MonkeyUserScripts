@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://freegpt.one/*
-// @version     2023.4.27
+// @version     2023.4.27.1
 // @grant       none
 // @run-at      document-body
 // @author      github.com @XiaoYingYo
