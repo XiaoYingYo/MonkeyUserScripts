@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     2023.4.27.1
+// @version     2023.4.27.2
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -347,9 +347,13 @@ function Init(index) {
         for (let i = 0; i < localStorage.length; i++) {
             let key = localStorage.key(i);
             let value = localStorage.getItem(key);
-            if (key.indexOf("credentials_") == -1) {
+            if (key.indexOf("credentials_") != -1) {
                 let json = JSON.parse(value);
                 let sub = json.sub;
+                if (sub == null) {
+                    new Error(json);
+                    return;
+                }
                 global_module.Cookie.set("pp_disabled_speed_save_dialog_" + sub, "true", 10 * 365 * 24 * 60 * 60 * 1000);
             }
             break;
