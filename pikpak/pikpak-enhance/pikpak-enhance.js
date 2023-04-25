@@ -19,8 +19,8 @@
 // @grant       unsafeWindow
 // @run-at      document-start
 // @author      github.com @XiaoYingYo
-// @require     https://raw.githubusercontent.com/XiaoYingYo/ScriptModule/main/module_jquery.js
-// @require     https://raw.githubusercontent.com/XiaoYingYo/ScriptModule/main/module.js
+// @require     https://greasyfork.org/scripts/464779-module-jquery/code/module_jquery.js
+// @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @description 2023/4/23 20:06:50
 // ==/UserScript==
 
