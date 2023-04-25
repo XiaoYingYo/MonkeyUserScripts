@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     2023.4.27.5
+// @version     2023.4.27.6
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -21,7 +21,7 @@
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464779-module-jquery/code/module_jquery.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
-// @downloadURL  https://greasyfork.org/zh-CN/scripts/464781-pikpak-enhance.js
+// @downloadURL  https://greasyfork.org/scripts/464781-pikpak-enhance/code/Pikpak%20Enhance.user.js
 // @description 2023/4/23 20:06:50
 // ==/UserScript==
 
