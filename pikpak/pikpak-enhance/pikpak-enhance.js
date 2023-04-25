@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     2023.4.27.2
+// @version     2023.4.27.3
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -355,8 +355,8 @@ function Init(index) {
                     return;
                 }
                 global_module.Cookie.set("pp_disabled_speed_save_dialog_" + sub, "true", 10 * 365 * 24 * 60 * 60 * 1000);
+                break;
             }
-            break;
         }
     }
 }
