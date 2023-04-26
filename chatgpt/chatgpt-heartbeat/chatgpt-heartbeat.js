@@ -3,11 +3,11 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://freegpt.one/*
-// @version     2023.4.27.3
+// @version     2023.4.27
 // @grant       none
 // @run-at      document-body
 // @author      github.com @XiaoYingYo
-// @require     https://greasyfork.org/scripts/464779-module-jquery/code/module_jquery.js
+// @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @icon        https://raw.githubusercontent.com/adamlui/userscripts/master/chatgpt/media/icons/openai-favicon48.png
 // @icon64      https://raw.githubusercontent.com/adamlui/userscripts/master/chatgpt/media/icons/openai-favicon64.png

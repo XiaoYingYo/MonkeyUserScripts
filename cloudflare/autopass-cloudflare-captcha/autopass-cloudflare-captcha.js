@@ -4,11 +4,11 @@
 // @match        https://challenges.cloudflare.com/*
 // @match        https://chat.openai.com/*
 // @match        https://freegpt.one/*
-// @version      2023.4.27.3
+// @version      2023.4.27
 // @grant        none
 // @run-at       document-start
 // @author       github.com @XiaoYingYo
-// @require     https://greasyfork.org/scripts/464779-module-jquery/code/module_jquery.js
+// @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @icon         https://www.google.com/s2/favicons?sz=48&domain=cloudflare.com
 // @icon64       https://www.google.com/s2/favicons?sz=64&domain=cloudflare.com
