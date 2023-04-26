@@ -4,7 +4,7 @@
 // @match        https://challenges.cloudflare.com/*
 // @match        https://chat.openai.com/*
 // @match        https://freegpt.one/*
-// @version      2023.4.27
+// @version      XiaoYing_2023.4.28
 // @grant        none
 // @run-at       document-start
 // @author       github.com @XiaoYingYo
@@ -17,7 +17,6 @@
 // ==/UserScript==
 
 global_module = window["global_module"];
-var $ = window["$$$"];
 
 async function VerifyYouAreHuman_01() {
     let dom = await global_module.waitForElement("input[value='Verify you are human'][type='button']", null, null, 200, -1);

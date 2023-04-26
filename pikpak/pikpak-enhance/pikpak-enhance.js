@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     2023.4.27
+// @version     XiaoYing_2023.4.28
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -26,7 +26,6 @@
 // ==/UserScript==
 
 var global_module = window["global_module"];
-var $ = window["$$$"];
 
 var GlobalVariable = {};
 
