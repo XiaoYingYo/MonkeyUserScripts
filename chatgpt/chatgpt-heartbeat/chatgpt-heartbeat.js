@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://freegpt.one/*
-// @version     XiaoYing_2023.4.28
+// @version     XiaoYing_2023.4.29
 // @grant       none
 // @run-at      document-body
 // @author      github.com @XiaoYingYo
@@ -61,7 +61,7 @@ function getRefreshIcon() {
     </svg><span style="margin-left: 5px;">Retry</span></button>`;
 }
 
-GlobalVariable["NetworkErrorClass"] = "flex flex-col items-start gap-4 whitespace-pre-wrap flex flex-row gap-2 text-red-500";
+GlobalVariable["NetworkErrorClass"] = "flex flex-row gap-2 text-red-500";
 
 unsafeWindow["ChatGPTHeartbeat.user.function"] = {};
 
