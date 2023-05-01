@@ -4,7 +4,7 @@
 // @match        https://challenges.cloudflare.com/*
 // @match        https://chat.openai.com/*
 // @match        https://freegpt.one/*
-// @version      XiaoYing_2023.4.29
+// @version      XiaoYing_2023.05.01
 // @grant        none
 // @run-at       document-start
 // @author       github.com @XiaoYingYo

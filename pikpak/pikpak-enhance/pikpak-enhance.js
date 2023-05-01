@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.4.29
+// @version     XiaoYing_2023.05.01
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -21,7 +21,6 @@
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
-// @downloadURL  https://greasyfork.org/scripts/464781-pikpak-enhance/code/Pikpak%20Enhance.user.js
 // @description 2023/4/23 20:06:50
 // ==/UserScript==
 
@@ -36,22 +35,25 @@ async function DealWithoverlay(i, callback) {
             resolve();
             return;
         }
-        let btn = null;
+        let Target = null;
         if (i != null) {
             switch (i) {
                 case 0:
-                    btn = overlay.find("button[class*='is-text']").eq(0);
+                    Target = overlay.find("button[class*='is-text']").eq(0);
                     break;
                 case 1:
-                    btn = overlay.find("button[class*='--primary']").eq(0);
+                    Target = overlay.find("button[class*='--primary']").eq(0);
+                    break;
+                case 2:
+                    Target = overlay.find("label[class^='el-checkbox']").eq(0);
                     break;
             }
         }
         if (typeof (callback) == "function") {
-            callback(overlay, btn);
+            callback(overlay, Target);
         } else {
-            if (btn != null) {
-                btn.click();
+            if (Target != null) {
+                Target.click();
             }
             overlay.hide();
         }
@@ -120,6 +122,26 @@ GlobalVariable.Interfacelanguage = {
             "th": "ป้อนที่อยู่อีเมลและรหัสผ่านของคุณที่นี่เพื่อล็อกอินโดยอัตโนมัติ",
             "vi": "Nhập địa chỉ email và mật khẩu của bạn ở đây để tự động đăng nhập",
             "id": "Masukkan alamat email dan kata sandi Anda di sini untuk masuk secara otomatis"
+        }
+    },
+    "main": {
+        001: {
+            "en": "Auto confirm all delete tasks",
+            "zh-CN": "自动确认全部删除任务",
+            "zh-TW": "自動確認全部刪除任務",
+            "ja": "すべての削除タスクを自動確認する",
+            "ko": "모든 삭제 작업 자동 확인",
+            "de": "Alle Löschvorgänge automatisch bestätigen",
+            "fr": "Confirmer automatiquement toutes les tâches de suppression",
+            "es": "Confirmar automáticamente todas las tareas de eliminación",
+            "pt": "Confirmar automaticamente todas as tarefas de exclusão",
+            "ru": "Автоматически подтверждать все задачи на удаление",
+            "it": "Conferma automaticamente tutti i compiti di eliminazione",
+            "tr": "Tüm silme görevlerini otomatik olarak onaylayın",
+            "ar": "تأكيد جميع مهام الحذف تلقائيًا",
+            "th": "ยืนยันงานลบทั้งหมดโดยอัตโนมัติ",
+            "vi": "Tự động xác nhận tất cả các tác vụ xóa",
+            "id": "Konfirmasi otomatis semua tugas penghapusan"
         }
     }
 };
@@ -198,6 +220,12 @@ function OverloadMenu() {
     let V001 = GM_getValue("loginForEmail", false) ? "√" : "×";
     GlobalVariable.registerEdMenu.push(GM_registerMenuCommand(L001 + " " + V001, function () {
         GM_setValue("loginForEmail", !GM_getValue("loginForEmail", false));
+        OverloadMenu();
+    }));
+    let L002 = GlobalVariable.Interfacelanguage["main"][001][GlobalVariable.Navigatorlanguage];
+    let V002 = GM_getValue("autoConfirmAllDeleteTasks", false) ? "√" : "×";
+    GlobalVariable.registerEdMenu.push(GM_registerMenuCommand(L002 + " " + V002, function () {
+        GM_setValue("autoConfirmAllDeleteTasks", !GM_getValue("autoConfirmAllDeleteTasks", false));
         OverloadMenu();
     }));
 }
@@ -311,6 +339,64 @@ async function MonitorLogout() {
     });
 }
 
+async function ListenControlButtonClick() {
+    let controlButton = await global_module.waitForElement("div[class='control-button']", null, null, 100, 60 * 1000);
+    GlobalVariable.controlButton = { controlButton };
+    let globalActionClick = async function () {
+        DealWithoverlay(2, function (overlay, Target) {
+            Target.click();
+            DealWithoverlay(1);
+        })
+    }
+    controlButton.click(function () {
+        if (!GM_getValue("autoConfirmAllDeleteTasks", false)) {
+            return;
+        }
+        if (GlobalVariable.controlButton.transferContent == null) {
+            GlobalVariable.controlButton.transferContent = $(this).parent().eq(0).parent().eq(0).find("div[class^='transfer-content']").eq(0);
+        }
+        let transferContent = GlobalVariable.controlButton.transferContent;
+        let clearTimes = function () {
+            if (GlobalVariable.controlButton.FindTime != null) {
+                clearTimeout(GlobalVariable.controlButton.FindTime);
+            }
+            if (GlobalVariable.controlButton.FindGlobalActionTime != null) {
+                clearInterval(GlobalVariable.controlButton.FindGlobalActionTime);
+            }
+        }
+        clearTimes();
+        GlobalVariable.controlButton.FindTime = setTimeout(function () {
+            let isShow = transferContent.css("display") != "none";
+            if (!isShow) {
+                if (GlobalVariable.controlButton.globalAction != null) {
+                    GlobalVariable.controlButton.globalAction.off("click", globalActionClick);
+                }
+                clearTimes();
+                return;
+            }
+            let _class = "global-action";
+            let transferContentFather = transferContent.find("div[class='" + _class + "']").eq(0);
+            let FindGlobalAction = function () {
+                let globalAction = transferContentFather.find("div[class^='" + _class + "']").eq(0);
+                GlobalVariable.controlButton.globalAction = globalAction;
+                globalAction.on("click", globalActionClick);
+            }
+            if (transferContentFather.length > 0) {
+                FindGlobalAction();
+            } else {
+                GlobalVariable.controlButton.FindGlobalActionTime = setInterval(function () {
+                    transferContentFather = transferContent.find("div[class='" + _class + "']").eq(0);
+                    if (transferContentFather.length == 0) {
+                        return;
+                    }
+                    clearTimes();
+                    FindGlobalAction();
+                }, 200);
+            }
+        }, 260);
+    });
+}
+
 async function main() {
     MonitorUrl(0);
     MonitorLogout();
@@ -330,6 +416,7 @@ async function main() {
         }
         return;
     }
+    ListenControlButtonClick();
     StopMonitorUrl();
     GlobalVariable.activeLi = activeLi;
     nav.find("li").on("click", LiClick);
