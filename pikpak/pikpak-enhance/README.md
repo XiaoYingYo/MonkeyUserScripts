@@ -9,6 +9,7 @@
 7. Remove the cookie agreement that pops up when you log in for the first time, and automatically accept all cookie permissions
 8. [Freely toggle this feature on or off from the Violent Monkey extension menu] When using the mailbox to log in on the login interface, add automatic identification of the mailbox and password, and automatically fill in and log in automatically
 9. [Freely toggle this feature on or off from the Violent Monkey extension menu] When you click `Delete All` on the cloud download panel, you can automatically click OK to delete
+10. Added the membership expiry time displayed in the upper right corner
 - 中文解释
 1. 在`全部文件`选项卡时,为右键菜单点击`删除`时,无需确认立即点击删除
 2. 在`全部文件`选项卡时,为右键菜单点击`下载`时,无需确认立即点击浏览器下载
@@ -19,3 +20,4 @@
 7. 移除第一次登录时弹窗的Cookie协议,自动接受全部Cookie许可
 8. [从暴力猴扩展程序菜单自由开启或关闭此功能] 在登录界面使用邮箱登录时,新增自动识别邮箱和密码,并自动填充并自动登录
 9. [从暴力猴扩展程序菜单自由开启或关闭此功能] 在云下载面板点击`全部删除`时,可自动点击确定删除
+10. 新增右上角显示会员到期时间

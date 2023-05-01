@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.01
+// @version     XiaoYing_2023.05.02
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -425,6 +425,55 @@ async function main() {
     Init(1);
 }
 
+async function HookFetch() {
+    const oneFetch = unsafeWindow.fetch;
+    await new Promise(resolve => {
+        let Time = setInterval(() => {
+            if (oneFetch == unsafeWindow.fetch) {
+                return;
+            }
+            clearInterval(Time);
+            resolve();
+        }, 10);
+    });
+    const originalFetch = unsafeWindow.fetch;
+    unsafeWindow.fetch = function (...args) {
+        (async function () {
+            let url = args[0];
+            if (url.indexOf("vip/v1/vip/info") != -1) {
+                unsafeWindow.fetch = originalFetch;
+                let f = await originalFetch.apply(this, args);
+                let json = await f.json();
+                let data = json.data;
+                let expire = data.expire;
+                let now = new Date();
+                let expireDate = new Date(expire);
+                let day = (expireDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
+                day = Math.ceil(day);
+                await new Promise(resolve => {
+                    let Time = setInterval(() => {
+                        if (GlobalVariable.language == null) {
+                            return;
+                        }
+                        if (GlobalVariable.language["my-vip-days"] == null) {
+                            return;
+                        }
+                        clearInterval(Time);
+                        resolve();
+                    }, 500);
+                });
+                let title = GlobalVariable.language["my-vip-days"].replace("{0}", day);
+                let cloneDom = await global_module.waitForElement("div[class='header-bar-right']", null, null, 100, -1);
+                cloneDom = cloneDom.find("a").eq(0);
+                let newDom = global_module.cloneAndHide(cloneDom[0], 1);
+                cloneDom.show();
+                $(newDom).text(title);
+            }
+        })();
+        return originalFetch.apply(this, args);
+    }
+}
+
 function Init(index) {
     global_module.Cookie.set("allow_analysis", "true", 10 * 365 * 24 * 60 * 60 * 1000);
     if (index == 0) {
@@ -436,6 +485,8 @@ function Init(index) {
             if (key.indexOf("credentials_") != -1) {
                 let json = JSON.parse(value);
                 let sub = json.sub;
+                let token = json.access_token;
+                GlobalVariable.Token = token;
                 if (sub == null) {
                     new Error(json);
                     return;
@@ -458,4 +509,5 @@ function Preload() {
     }
 }
 
+HookFetch();
 Preload();
