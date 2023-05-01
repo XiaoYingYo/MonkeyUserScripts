@@ -12,7 +12,7 @@
 // @icon        https://raw.githubusercontent.com/adamlui/userscripts/master/chatgpt/media/icons/openai-favicon48.png
 // @icon64      https://raw.githubusercontent.com/adamlui/userscripts/master/chatgpt/media/icons/openai-favicon64.png
 // @downloadURL  https://greasyfork.org/scripts/464783-chatgpt-heartbeat/code/ChatGPT%20Heartbeat.user.js
-// @description 2023-3-6 13:25:06
+// @description 
 // ==/UserScript==
 
 var global_module = window["global_module"];
