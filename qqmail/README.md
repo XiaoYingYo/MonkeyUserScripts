@@ -1,4 +1,4 @@
-### <picture><source media="(prefers-color-scheme: dark)" srcset="https://mail.qq.com/zh_CN/htmledition/images/favicon/qqmail_favicon_32h.png"><img width=15 alt="Pikpak logo" src="https://mail.qq.com/zh_CN/htmledition/images/favicon/qqmail_favicon_32h.png"></picture> [QQMail Enhance](qq-邮箱增强.js)
+### <picture><source media="(prefers-color-scheme: dark)" srcset="https://mail.qq.com/zh_CN/htmledition/images/favicon/qqmail_favicon_32h.png"><img width=15 alt="Pikpak logo" src="https://mail.qq.com/zh_CN/htmledition/images/favicon/qqmail_favicon_32h.png"></picture> [QQMail Enhance](qq-mail-enhance.js)
 - English explanation
 1. In the `All Files` tab, when clicking `Delete` for the right-click menu, click Delete immediately without confirmation
 2. In the `All Files` tab, when clicking `Download` for the right-click menu, click the browser to download immediately without confirmation
