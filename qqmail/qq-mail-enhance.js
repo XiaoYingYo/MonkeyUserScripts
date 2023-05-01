@@ -21,7 +21,7 @@
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
-// @description 
+// @description Violentmonkey Scripts
 // ==/UserScript==
 
 var global_module = window["global_module"];
