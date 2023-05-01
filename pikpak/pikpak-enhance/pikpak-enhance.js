@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.02
+// @version     XiaoYing_2023.05.03
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -425,6 +425,36 @@ async function main() {
     Init(1);
 }
 
+var FetchMap = new Map();
+FetchMap.set("/vip/v1/vip/info", async function (f) {
+    let json = await f.json();
+    let data = json.data;
+    let expire = data.expire;
+    let now = new Date();
+    let expireDate = new Date(expire);
+    let day = (expireDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
+    day = Math.ceil(day);
+    await new Promise(resolve => {
+        let Time = setInterval(() => {
+            if (GlobalVariable.language == null) {
+                return;
+            }
+            if (GlobalVariable.language["my-vip-days"] == null) {
+                return;
+            }
+            clearInterval(Time);
+            resolve();
+        }, 500);
+    });
+    let title = GlobalVariable.language["my-vip-days"].replace("{0}", day);
+    let cloneDom = await global_module.waitForElement("div[class='header-bar-right']", null, null, 100, -1);
+    cloneDom = cloneDom.find("a").eq(0);
+    let newDom = global_module.cloneAndHide(cloneDom[0], 1);
+    cloneDom.show();
+    $(newDom).text(title);
+});
+
+
 async function HookFetch() {
     const oneFetch = unsafeWindow.fetch;
     await new Promise(resolve => {
@@ -439,36 +469,13 @@ async function HookFetch() {
     const originalFetch = unsafeWindow.fetch;
     unsafeWindow.fetch = function (...args) {
         (async function () {
-            let url = args[0];
-            if (url.indexOf("vip/v1/vip/info") != -1) {
-                unsafeWindow.fetch = originalFetch;
-                let f = await originalFetch.apply(this, args);
-                let json = await f.json();
-                let data = json.data;
-                let expire = data.expire;
-                let now = new Date();
-                let expireDate = new Date(expire);
-                let day = (expireDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
-                day = Math.ceil(day);
-                await new Promise(resolve => {
-                    let Time = setInterval(() => {
-                        if (GlobalVariable.language == null) {
-                            return;
-                        }
-                        if (GlobalVariable.language["my-vip-days"] == null) {
-                            return;
-                        }
-                        clearInterval(Time);
-                        resolve();
-                    }, 500);
-                });
-                let title = GlobalVariable.language["my-vip-days"].replace("{0}", day);
-                let cloneDom = await global_module.waitForElement("div[class='header-bar-right']", null, null, 100, -1);
-                cloneDom = cloneDom.find("a").eq(0);
-                let newDom = global_module.cloneAndHide(cloneDom[0], 1);
-                cloneDom.show();
-                $(newDom).text(title);
+            let url = new URL(args[0]);
+            let pathname = url.pathname;
+            let callback = FetchMap.get(pathname);
+            if (callback == null) {
+                return;
             }
+            callback(await originalFetch.apply(this, args));
         })();
         return originalFetch.apply(this, args);
     }
