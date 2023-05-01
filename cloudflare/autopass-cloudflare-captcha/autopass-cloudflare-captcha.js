@@ -4,7 +4,7 @@
 // @match        https://challenges.cloudflare.com/*
 // @match        https://chat.openai.com/*
 // @match        https://freegpt.one/*
-// @version      XiaoYing_2023.05.03
+// @version      XiaoYing_2023.05.04
 // @grant        none
 // @run-at       document-start
 // @author       github.com @XiaoYingYo
@@ -13,7 +13,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=48&domain=cloudflare.com
 // @icon64       https://www.google.com/s2/favicons?sz=64&domain=cloudflare.com
 // @downloadURL  https://greasyfork.org/scripts/464785-autopass-cloudflare-captcha/code/Autopass%20Cloudflare%20CAPTCHA.user.js
-// @description 
+// @description Violentmonkey Scripts
 // ==/UserScript==
 
 global_module = window["global_module"];
