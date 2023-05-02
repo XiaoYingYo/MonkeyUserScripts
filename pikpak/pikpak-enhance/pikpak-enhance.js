@@ -1,9 +1,26 @@
 // ==UserScript==
 // @name        Pikpak Enhance
+// @name        Pikpak Enhance
+// @name:en     Pikpak Enhance
+// @name:zh-CN  Pikpak 增强
+// @name:zh-TW  Pikpak 增強
+// @name:ja     Pikpak エンハンス
+// @name:ko     Pikpak 개선
+// @name:de     Pikpak Verbessern
+// @name:fr     Pikpak Améliorer
+// @name:es     Mejora de Pikpak
+// @name:pt     Aumentar o pikpak
+// @name:ru     Pikpak Улучшить
+// @name:it     Miglioramento di Pikpak
+// @name:tr     Pikpak Geliştirmek
+// @name:ar     تعزيز Pikpak
+// @name:th     Pikpak เสริม
+// @name:vi     Nâng cao Pikpak
+// @name:id     Tingkatkan Pikpak
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.06
+// @version     XiaoYing_2023.05.07
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
