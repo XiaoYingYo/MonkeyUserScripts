@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.10
+// @version     XiaoYing_2023.05.11
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -425,16 +425,8 @@ async function MonitorLogout() {
         for (let key in localStorage) {
             localStorage.removeItem(key);
         }
+        global_module.Cookie.clear();
         unsafeWindow.location.href = "/drive/login";
-        // DealWithoverlay(1, function (overlay, btn) {
-        //     if (btn != null) {
-        //         btn.on("click", function () {
-        //             overlay.hide();
-        //             global_module.Cookie.clear();
-        //             unsafeWindow.location.href = "/drive/login";
-        //         });
-        //     }
-        // });
     });
 }
 
