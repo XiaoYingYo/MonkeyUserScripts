@@ -10,6 +10,8 @@
 8. [Freely toggle this feature on or off from the Violent Monkey extension menu] When using the mailbox to log in on the login interface, add automatic identification of the mailbox and password, and automatically fill in and log in automatically
 9. [Freely toggle this feature on or off from the Violent Monkey extension menu] When you click `Delete All` on the cloud download panel, you can automatically click OK to delete
 10. Added the membership expiry time displayed in the upper right corner
+11. [From the Violent Monkey extension menu click on Login] Support to obtain free shared VIP account and log in automatically
+12. Change the logout to a hidden logout, not a complete logout, so that multiple browser devices can use the same account at the same time
 - 中文解释
 1. 在`全部文件`选项卡时,为右键菜单点击`删除`时,无需确认立即点击删除
 2. 在`全部文件`选项卡时,为右键菜单点击`下载`时,无需确认立即点击浏览器下载
@@ -21,3 +23,5 @@
 8. [从暴力猴扩展程序菜单自由开启或关闭此功能] 在登录界面使用邮箱登录时,新增自动识别邮箱和密码,并自动填充并自动登录
 9. [从暴力猴扩展程序菜单自由开启或关闭此功能] 在云下载面板点击`全部删除`时,可自动点击确定删除
 10. 新增右上角显示会员到期时间
+11. [从暴力猴扩展程序菜单点击登录] 支持获取免费的共享VIP账号并自动登录
+12. 将退出登录改为隐性退出,不完全退出,这样使得可以再多个浏览器设备同时使用同一个账号

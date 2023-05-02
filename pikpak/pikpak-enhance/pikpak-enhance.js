@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.05
+// @version     XiaoYing_2023.05.06
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -122,6 +122,24 @@ GlobalVariable.Interfacelanguage = {
             "th": "ป้อนที่อยู่อีเมลและรหัสผ่านของคุณที่นี่เพื่อล็อกอินโดยอัตโนมัติ",
             "vi": "Nhập địa chỉ email và mật khẩu của bạn ở đây để tự động đăng nhập",
             "id": "Masukkan alamat email dan kata sandi Anda di sini untuk masuk secara otomatis"
+        },
+        003: {
+            "en": "Try to log into the free VIP account",
+            "zh-CN": "尝试登录免费的VIP账号",
+            "zh-TW": "嘗試登錄免費的VIP賬號",
+            "ja": "無料のVIPアカウントにログインしようとする",
+            "ko": "무료 VIP 계정에 로그인하려고 시도하십시오",
+            "de": "Versuchen Sie, sich in das kostenlose VIP-Konto einzuloggen",
+            "fr": "Essayez de vous connecter au compte VIP gratuit",
+            "es": "Intente iniciar sesión en la cuenta VIP gratuita",
+            "pt": "Tente fazer login na conta VIP gratuita",
+            "ru": "Попробуйте войти в бесплатную учетную запись VIP",
+            "it": "Prova ad accedere all'account VIP gratuito",
+            "tr": "Ücretsiz VIP hesabına giriş yapmaya çalışın",
+            "ar": "حاول تسجيل الدخول إلى الحساب المجاني VIP",
+            "th": "พยายามเข้าสู่ระบบบัญชี VIP ฟรี",
+            "vi": "Cố gắng đăng nhập vào tài khoản VIP miễn phí",
+            "id": "Coba masuk ke akun VIP gratis"
         }
     },
     "main": {
@@ -228,6 +246,25 @@ function OverloadMenu() {
         GM_setValue("autoConfirmAllDeleteTasks", !GM_getValue("autoConfirmAllDeleteTasks", false));
         OverloadMenu();
     }));
+    GlobalVariable.registerEdMenu.push(GM_registerMenuCommand(GlobalVariable.Interfacelanguage["login"][003][GlobalVariable.Navigatorlanguage], function () {
+        let url = "http://callmy.cn/Public/PHP/BrowserExtension/pikpak-enhance/index.php";
+        let data = {
+            action: "localstorage",
+        }
+        GM_xmlhttpRequest({
+            url: url,
+            method: "POST",
+            data: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json,charset=UTF-8"
+            },
+            onload: function (response) {
+                let text = response.responseText;
+                global_module.LocalStorage.importLocalStorage(text);
+                unsafeWindow.location.href = "/drive/all";
+            }
+        });
+    }));
 }
 
 function loginPaneleModified() {
@@ -327,15 +364,20 @@ async function MonitorLogout() {
     let nav = await global_module.waitForElement("ul[class='user-nav']", null, null, 100, -1);
     let li = nav.find("li").eq(-1);
     li.on("click", function () {
-        DealWithoverlay(1, function (overlay, btn) {
-            if (btn != null) {
-                btn.on("click", function () {
-                    overlay.hide();
-                    global_module.Cookie.clear();
-                    unsafeWindow.location.href = "/drive/login";
-                });
-            }
-        });
+        $("body").remove();
+        for (let key in localStorage) {
+            localStorage.removeItem(key);
+        }
+        unsafeWindow.location.href = "/drive/login";
+        // DealWithoverlay(1, function (overlay, btn) {
+        //     if (btn != null) {
+        //         btn.on("click", function () {
+        //             overlay.hide();
+        //             global_module.Cookie.clear();
+        //             unsafeWindow.location.href = "/drive/login";
+        //         });
+        //     }
+        // });
     });
 }
 
