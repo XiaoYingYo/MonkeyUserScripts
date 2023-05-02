@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name        Pikpak Enhance
-// @name        Pikpak Enhance
 // @name:en     Pikpak Enhance
 // @name:zh-CN  Pikpak 增强
 // @name:zh-TW  Pikpak 增強
@@ -39,6 +38,22 @@
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @description Violentmonkey Scripts
+// @description:en Violentmonkey Scripts
+// @description:zh-CN Violentmonkey 脚本
+// @description:zh-TW Violentmonkey 腳本
+// @description:ja Violentmonkey スクリプト
+// @description:ko Violentmonkey 스크립트
+// @description:de Violentmonkey Skripte
+// @description:fr Violentmonkey Scripts
+// @description:es Violentmonkey Scripts
+// @description:pt Violentmonkey Scripts
+// @description:ru Violentmonkey Сценарии
+// @description:it Violentmonkey Scripts
+// @description:tr Violentmonkey Scripts
+// @description:ar Violentmonkey Scripts
+// @description:th Violentmonkey Scripts
+// @description:vi Violentmonkey Scripts
+// @description:id Violentmonkey Scripts
 // ==/UserScript==
 
 var global_module = window["global_module"];
