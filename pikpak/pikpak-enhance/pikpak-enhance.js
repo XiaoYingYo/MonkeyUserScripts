@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.08
+// @version     XiaoYing_2023.05.09
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -117,6 +117,7 @@ async function LiClick() {
 GlobalVariable.MonitorMenuClickFun = global_module.debounce(MonitorMenuClick, 100);
 GlobalVariable.InterfacelanguageList = ["en", "zh-CN", "zh-TW", "ja", "ko", "de", "fr", "es", "pt", "ru", "it", "tr", "ar", "th", "vi", "id"];
 GlobalVariable.Navigatorlanguage = GlobalVariable.InterfacelanguageList.indexOf(navigator.language) != -1 ? navigator.language : "en";
+GlobalVariable.Pikpaklanguage = localStorage.getItem("pp_locale") || "en";
 GlobalVariable.Interfacelanguage = {
     "login": {
         001: {
@@ -259,8 +260,10 @@ async function FindStr(obj) {
                 var value = obj[key];
                 if (typeof value === 'function') {
                     let scriptStr = value.toString();
-                    if (scriptStr.indexOf("e.exports=JSON.parse") != -1) {
-                        scriptStr = scriptStr.replace("e.exports=", "window['__language__'] = ");
+                    if (scriptStr.indexOf(".exports=JSON.parse") != -1) {
+                        let index = scriptStr.indexOf(".exports=JSON.parse") - 1;
+                        let char = scriptStr[index];
+                        scriptStr = scriptStr.replace(char + ".exports=", "window['__language__'] = ");
                         scriptStr = "(" + scriptStr + ")()";
                         let func = new Function(scriptStr);
                         func();
@@ -504,6 +507,14 @@ async function main() {
         return;
     }
     await FindStr(unsafeWindow.webpackChunkxlco_pikpak_web);
+    if (GlobalVariable.language == null) {
+        GlobalVariable.language = {
+            "my-vip-days": "Vip remaining {0} days",
+            "download": "Download",
+            "i18n-delete": "Delete",
+            "delete-permanently": "Delete permanently"
+        }
+    }
     GlobalVariable.nav = nav;
     let activeLi = await global_module.waitForElement("a[class^='active']", null, null, 100, 60 * 1000, nav);
     if (activeLi == null) {
