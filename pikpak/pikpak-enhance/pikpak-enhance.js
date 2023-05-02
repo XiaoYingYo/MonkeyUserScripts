@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.09
+// @version     XiaoYing_2023.05.10
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -443,8 +443,12 @@ async function ListenControlButtonClick() {
     GlobalVariable.controlButton = { controlButton };
     let globalActionClick = async function () {
         DealWithoverlay(2, function (overlay, Target) {
-            Target.click();
-            DealWithoverlay(1);
+            if (Target.hasClass("is-checked")) {
+                Target.click();
+            }
+            setTimeout(function () {
+                DealWithoverlay(1);
+            }, 100);
         })
     }
     controlButton.click(function () {
@@ -554,9 +558,15 @@ FetchMap.set("/vip/v1/vip/info", async function (f) {
         }, 500);
     });
     let title = GlobalVariable.language["my-vip-days"].replace("{0}", day);
+    if (GlobalVariable.vipDaysDom != null) {
+        GlobalVariable.vipDaysDom.text(title);
+        return;
+    }
     let cloneDom = await global_module.waitForElement("div[class='header-bar-right']", null, null, 100, -1);
     cloneDom = cloneDom.find("a").eq(0);
-    let newDom = global_module.cloneAndHide(cloneDom[0], 1);
+    let newDom = $(global_module.cloneAndHide(cloneDom[0], 1));
+    newDom.attr("id", "_vipdays_");
+    GlobalVariable.vipDaysDom = newDom;
     cloneDom.show();
     $(newDom).text(title);
 });
