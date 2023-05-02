@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.07
+// @version     XiaoYing_2023.05.08
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -172,7 +172,25 @@ GlobalVariable.Interfacelanguage = {
             "th": "พยายามเข้าสู่ระบบบัญชี VIP ฟรี",
             "vi": "Cố gắng đăng nhập vào tài khoản VIP miễn phí",
             "id": "Coba masuk ke akun VIP gratis"
-        }
+        },
+        004: {
+            "en": "Feedback VIP account is invalid",
+            "zh-CN": "反馈VIP账号无效",
+            "zh-TW": "反饋VIP賬號無效",
+            "ja": "フィードバックVIPアカウントが無効です",
+            "ko": "피드백 VIP 계정이 잘못되었습니다",
+            "de": "Feedback VIP-Konto ist ungültig",
+            "fr": "Le compte VIP de commentaires est invalide",
+            "es": "La cuenta VIP de comentarios no es válida",
+            "pt": "A conta VIP de feedback é inválida",
+            "ru": "Обратная связь VIP-аккаунт недействителен",
+            "it": "Il conto VIP di feedback non è valido",
+            "tr": "Geri bildirim VIP hesabı geçersiz",
+            "ar": "حساب VIP للتعليقات غير صالح",
+            "th": "บัญชี VIP ของคำติชมไม่ถูกต้อง",
+            "vi": "Tài khoản VIP phản hồi không hợp lệ",
+            "id": "Akun VIP umpan balik tidak valid"
+        },
     },
     "main": {
         001: {
@@ -296,6 +314,10 @@ function OverloadMenu() {
                 unsafeWindow.location.href = "/drive/all";
             }
         });
+    }));
+    GlobalVariable.registerEdMenu.push(GM_registerMenuCommand(GlobalVariable.Interfacelanguage["login"][004][GlobalVariable.Navigatorlanguage], function () {
+        let url = "https://greasyfork.org/zh-CN/scripts/464781-pikpak-enhance/feedback?filter_locale=0&sort=updated&language=all";
+        GM_openInTab(url, { active: true, insert: true, setParent: true });
     }));
 }
 
