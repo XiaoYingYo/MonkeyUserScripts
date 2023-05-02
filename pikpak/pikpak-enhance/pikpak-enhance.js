@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
 // @grant       none
-// @version     XiaoYing_2023.05.04
+// @version     XiaoYing_2023.05.05
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -340,7 +340,7 @@ async function MonitorLogout() {
 }
 
 async function ListenControlButtonClick() {
-    let controlButton = await global_module.waitForElement("div[class='control-button']", null, null, 100, 60 * 1000);
+    let controlButton = await global_module.waitForElement("div[class='menu-box']", null, null, 100, 60 * 1000);
     GlobalVariable.controlButton = { controlButton };
     let globalActionClick = async function () {
         DealWithoverlay(2, function (overlay, Target) {
