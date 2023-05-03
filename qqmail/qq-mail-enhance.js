@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mail.qq.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.12
+// @version     XiaoYing_2023.05.13
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -27,12 +27,12 @@
 var global_module = window['global_module'];
 
 var Func = new Map();
-Func.set('delMail', async() => {
+Func.set('delMail', async () => {
     let op = await global_module.waitForElement("div[class^='dialog_operate']", null, null);
     let confirm = $(op).find('a').eq(0);
     global_module.clickElement(confirm[0]);
 });
-Func.set('frame_html.html', async() => {
+Func.set('frame_html.html', async () => {
     window.addEventListener(
         'message',
         (event) => {
@@ -48,13 +48,13 @@ Func.set('frame_html.html', async() => {
         },
         false
     );
-    let clearRecycleBin = async() => {
+    let clearRecycleBin = async () => {
         let folder_5 = $("li[id='folder_5_td']").eq(0);
         let a = folder_5.find('a');
         if (a.length === 1) {
             return;
         }
-        $(a[1]).on('click', async() => {
+        $(a[1]).on('click', async () => {
             console.log('delMail');
             Func.get('delMail')();
         });
@@ -74,26 +74,26 @@ Func.set('frame_html.html', async() => {
     let navMidBar = await global_module.waitForElement('div#navMidBar', null, null, -1);
     observer.observe(navMidBar.eq(0)[0], { childList: true, subtree: true });
 });
-Func.set('readmail.html', async() => {
+Func.set('readmail.html', async () => {
     let delMail = await global_module.waitForElement("a[ck='delMail'][opt]", null, null, -1);
     for (let i = 0; i < delMail.length; i++) {
         let Item = delMail[i];
-        $(Item).on('click', async() => {
+        $(Item).on('click', async () => {
             window.parent.postMessage({ origin: 'QQ邮箱增强', func: 'delMail' }, '*');
         });
     }
 });
-Func.set('mail_list.html', async() => {
+Func.set('mail_list.html', async () => {
     let delMail = await global_module.waitForElement("a[id='quick_completelydel'][class]", null, null, -1);
     for (let i = 0; i < delMail.length; i++) {
         let Item = delMail[i];
-        $(Item).on('click', async() => {
+        $(Item).on('click', async () => {
             window.parent.postMessage({ origin: 'QQ邮箱增强', func: 'delMail' }, '*');
         });
     }
 });
 
-(async() => {
+(async () => {
     let path = window.location.pathname;
     let last = path.lastIndexOf('/');
     let name = path.substring(last + 1) + '.html';

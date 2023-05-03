@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://freegpt.one/*
-// @version     XiaoYing_2023.05.12
+// @version     XiaoYing_2023.05.13
 // @grant       none
 // @run-at      document-body
 // @author      github.com @XiaoYingYo
@@ -74,7 +74,7 @@ unsafeWindow['ChatGPTHeartbeat.user.function']['PostMessage'] = (message) => {
             global_module.clickElement($(primaryBtn)[0]);
             primaryBtn = null;
         } else {
-            (async() => {
+            (async () => {
                 let NetworkErrorElement = await FindNetworkErrorElement(false);
                 if (NetworkErrorElement == null) {
                     return;
@@ -138,9 +138,9 @@ async function OpenNewChatGPTIniframe(force) {
         iframe.style.height = '100%';
         iframe.style.display = force ? 'none' : 'block';
         $(GlobalVariable['MainElement']).after(iframe);
-        that.reset = async() => {
+        that.reset = async () => {
             iframe.remove();
-            await new Promise(async(resolve) => {
+            await new Promise(async (resolve) => {
                 setTimeout(resolve, 1000);
             });
             that.createiframe();
@@ -168,7 +168,7 @@ async function OpenNewChatGPTIniframe(force) {
 }
 
 async function FindPrimaryBtn(NetworkErrorElement) {
-    return new Promise(async(resolve) => {
+    return new Promise(async (resolve) => {
         if (NetworkErrorElement == null) {
             NetworkErrorElement = GlobalVariable['NetworkErrorElement'];
         }
@@ -211,7 +211,7 @@ async function FindPrimaryBtn(NetworkErrorElement) {
 }
 
 async function FindAndDealWith() {
-    return new Promise(async(resolve) => {
+    return new Promise(async (resolve) => {
         // await MaskLayerDisappear();
         let NetworkErrorElement = await FindNetworkErrorElement(true);
         let Check = await PassTest();
@@ -261,7 +261,7 @@ async function PassTest() {
         'chat.openai.com': '/chat'
     };
     let CheckURL = CheckURLObj[location.host];
-    return new Promise(async(resolve) => {
+    return new Promise(async (resolve) => {
         let res = null;
         try {
             res = await Promise.race([
@@ -321,7 +321,7 @@ async function Main() {
         unsafeWindow.parent['ChatGPTHeartbeat.user.function'].PostMessage({ code: '0001', data: {} });
     }
     CheckInspection();
-    $(document).ready(async() => {
+    $(document).ready(async () => {
         errorToLog();
     });
     while (true) {
