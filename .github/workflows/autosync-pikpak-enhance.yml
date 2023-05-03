@@ -35,6 +35,6 @@ jobs:
           push_options: '--force'
           add_options: '--all'
           commit_user_email: auto-sync@userscripts.co
-          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `XiaoYingYo/MonkneyUserScripts`]'
+          commit_message: '${{ github.event.head_commit.message }} ↞ [auto-sync from `XiaoYingYo/MonkeyUserScripts`]'
           file_pattern: 'pikpak-enhance/*'
           repository: adamlui/userscripts
