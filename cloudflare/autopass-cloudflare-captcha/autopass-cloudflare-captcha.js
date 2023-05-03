@@ -4,7 +4,7 @@
 // @match        https://challenges.cloudflare.com/*
 // @match        https://chat.openai.com/*
 // @match        https://freegpt.one/*
-// @version      XiaoYing_2023.05.11
+// @version      XiaoYing_2023.05.12
 // @grant        none
 // @run-at       document-start
 // @author       github.com @XiaoYingYo
@@ -16,7 +16,7 @@
 // @description Violentmonkey Scripts
 // ==/UserScript==
 
-global_module = window["global_module"];
+global_module = window['global_module'];
 
 async function VerifyYouAreHuman_01() {
     let dom = await global_module.waitForElement("input[value='Verify you are human'][type='button']", null, null, 200, -1);
@@ -42,7 +42,7 @@ async function main() {
         VerifyYouAreHuman_01();
         return;
     }
-    if (window.location.host == "challenges.cloudflare.com" && $("div[id='success']").length > 0 && $("div[id='fail']").length > 0 && $("div[id='expired']").length > 0) {
+    if (window.location.host == 'challenges.cloudflare.com' && $("div[id='success']").length > 0 && $("div[id='fail']").length > 0 && $("div[id='expired']").length > 0) {
         VerifyYouAreHuman_02();
         return;
     }
@@ -52,4 +52,4 @@ async function main() {
     }
 }
 
-$(document).ready(() => main())
+$(document).ready(() => main());

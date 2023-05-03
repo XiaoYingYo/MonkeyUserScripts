@@ -3,8 +3,8 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mail.qq.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.11
-// @grant       GM_info 
+// @version     XiaoYing_2023.05.12
+// @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_addStyle
@@ -24,42 +24,46 @@
 // @description Violentmonkey Scripts
 // ==/UserScript==
 
-var global_module = window["global_module"];
+var global_module = window['global_module'];
 
 var Func = new Map();
-Func.set("delMail", async function () {
+Func.set('delMail', async() => {
     let op = await global_module.waitForElement("div[class^='dialog_operate']", null, null);
-    let confirm = $(op).find("a").eq(0);
+    let confirm = $(op).find('a').eq(0);
     global_module.clickElement(confirm[0]);
 });
-Func.set("frame_html.html", async function () {
-    window.addEventListener("message", function (event) {
-        let data = event.data;
-        if (data.origin !== "QQ邮箱增强") {
-            return;
-        };
-        let func = data.func;
-        if (!Func.has(func)) {
-            return;
-        }
-        Func.get(func)();
-    }, false);
-    let clearRecycleBin = async function () {
+Func.set('frame_html.html', async() => {
+    window.addEventListener(
+        'message',
+        (event) => {
+            let data = event.data;
+            if (data.origin !== 'QQ邮箱增强') {
+                return;
+            }
+            let func = data.func;
+            if (!Func.has(func)) {
+                return;
+            }
+            Func.get(func)();
+        },
+        false
+    );
+    let clearRecycleBin = async() => {
         let folder_5 = $("li[id='folder_5_td']").eq(0);
-        let a = folder_5.find("a");
+        let a = folder_5.find('a');
         if (a.length === 1) {
             return;
         }
-        $(a[1]).on("click", async function () {
-            console.log("delMail");
-            Func.get("delMail")();
+        $(a[1]).on('click', async() => {
+            console.log('delMail');
+            Func.get('delMail')();
         });
-    }
-    let observer = new MutationObserver(function (mutations) {
+    };
+    let observer = new MutationObserver((mutations) => {
         for (let mutation of mutations) {
             let Element = mutation.target;
-            let id = $(Element).attr("id");
-            if (id !== "navMidBar") {
+            let id = $(Element).attr('id');
+            if (id !== 'navMidBar') {
                 continue;
             }
             clearRecycleBin();
@@ -67,32 +71,32 @@ Func.set("frame_html.html", async function () {
         }
     });
     clearRecycleBin();
-    let navMidBar = await global_module.waitForElement("div#navMidBar", null, null, -1);
+    let navMidBar = await global_module.waitForElement('div#navMidBar', null, null, -1);
     observer.observe(navMidBar.eq(0)[0], { childList: true, subtree: true });
 });
-Func.set("readmail.html", async function () {
+Func.set('readmail.html', async() => {
     let delMail = await global_module.waitForElement("a[ck='delMail'][opt]", null, null, -1);
     for (let i = 0; i < delMail.length; i++) {
         let Item = delMail[i];
-        $(Item).on("click", async function () {
-            window.parent.postMessage({ origin: "QQ邮箱增强", func: 'delMail' }, "*");
+        $(Item).on('click', async() => {
+            window.parent.postMessage({ origin: 'QQ邮箱增强', func: 'delMail' }, '*');
         });
     }
 });
-Func.set("mail_list.html", async function () {
+Func.set('mail_list.html', async() => {
     let delMail = await global_module.waitForElement("a[id='quick_completelydel'][class]", null, null, -1);
     for (let i = 0; i < delMail.length; i++) {
         let Item = delMail[i];
-        $(Item).on("click", async function () {
-            window.parent.postMessage({ origin: "QQ邮箱增强", func: 'delMail' }, "*");
+        $(Item).on('click', async() => {
+            window.parent.postMessage({ origin: 'QQ邮箱增强', func: 'delMail' }, '*');
         });
     }
 });
 
-(async function () {
+(async() => {
     let path = window.location.pathname;
-    let last = path.lastIndexOf("/");
-    let name = path.substring(last + 1) + ".html";
+    let last = path.lastIndexOf('/');
+    let name = path.substring(last + 1) + '.html';
     if (!Func.has(name)) {
         return;
     }

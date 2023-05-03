@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://translate.google.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.11
+// @version     XiaoYing_2023.05.12
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -56,36 +56,36 @@
 // @description:id Violentmonkey Scripts
 // ==/UserScript==
 
-var global_module = window["global_module"];
+var global_module = window['global_module'];
 
 var GlobalVariable = new Map();
 
 var ProcessRules = new Map();
 
-ProcessRules.set("convertToTitleCase_01", function (Text) {
-    return convertToTitleCase(Text, "_");
+ProcessRules.set('convertToTitleCase_01', (Text) => {
+    return convertToTitleCase(Text, '_');
 });
 
-ProcessRules.set("convertToTitleCase_02", function (Text) {
-    return convertToTitleCase(Text, "-");
+ProcessRules.set('convertToTitleCase_02', (Text) => {
+    return convertToTitleCase(Text, '-');
 });
 
-ProcessRules.set("UppercaseSplitWords", function (Text) {
-    return Text.replace(/(?<!\s)([A-Z])/g, " $1").trim();
+ProcessRules.set('UppercaseSplitWords', (Text) => {
+    return Text.replace(/(?<!\s)([A-Z])/g, ' $1').trim();
 });
 
 function ProcessText(textarea) {
-    if (GlobalVariable.get("InputIng") === 1) {
+    if (GlobalVariable.get('InputIng') === 1) {
         return false;
     }
     let text = textarea.val();
     if (!containsEnglishLetter(text)) {
         return false;
     }
-    if (text == "") {
+    if (text == '') {
         return false;
     }
-    GlobalVariable.set("InputIng", 1);
+    GlobalVariable.set('InputIng', 1);
     let newText = text;
     for (const item of ProcessRules.values()) {
         newText = item(newText);
@@ -94,19 +94,19 @@ function ProcessText(textarea) {
         }
     }
     if (newText === text) {
-        GlobalVariable.set("InputIng", 0);
+        GlobalVariable.set('InputIng', 0);
         return false;
     }
     global_module.AnalogInput.AnalogInput(textarea[0], newText);
-    GlobalVariable.set("InputIng", 0);
-    let oldChanges = GlobalVariable.get("IgnoreChanges");
-    GlobalVariable.set("IgnoreChanges", oldChanges + 1);
+    GlobalVariable.set('InputIng', 0);
+    let oldChanges = GlobalVariable.get('IgnoreChanges');
+    GlobalVariable.set('IgnoreChanges', oldChanges + 1);
     return true;
 }
 
 function convertToTitleCase(Text, separator) {
-    let regx = new RegExp(separator, "g");
-    const words = Text.replace(regx, " ").split(" ");
+    let regx = new RegExp(separator, 'g');
+    const words = Text.replace(regx, ' ').split(' ');
     if (words.length == 1) {
         return Text;
     }
@@ -114,7 +114,7 @@ function convertToTitleCase(Text, separator) {
         const lowerCaseWord = word.toLowerCase();
         return lowerCaseWord.charAt(0).toUpperCase() + lowerCaseWord.slice(1);
     });
-    return titleCaseWords.join(" ");
+    return titleCaseWords.join(' ');
 }
 
 function containsEnglishLetter(str) {
@@ -131,22 +131,17 @@ function containsEnglishLetter(str) {
 }
 
 async function main() {
-    let textarea = await global_module.waitForElement(
-        "textarea[class][jsname]"
-    );
+    let textarea = await global_module.waitForElement('textarea[class][jsname]');
     let polite = await global_module.waitForElement("div[aria-live='polite']");
     textarea = textarea.eq(0);
-    GlobalVariable.set("InputIng", 0);
-    GlobalVariable.set("IgnoreChanges", 0);
-    let MutationObserver =
-        unsafeWindow.MutationObserver ||
-        unsafeWindow.WebKitMutationObserver ||
-        unsafeWindow.MozMutationObserver;
+    GlobalVariable.set('InputIng', 0);
+    GlobalVariable.set('IgnoreChanges', 0);
+    let MutationObserver = unsafeWindow.MutationObserver || unsafeWindow.WebKitMutationObserver || unsafeWindow.MozMutationObserver;
     let observer = new MutationObserver(
-        global_module.debounce(function () {
-            if (GlobalVariable.get("IgnoreChanges") !== 0) {
-                let oldChanges = GlobalVariable.get("IgnoreChanges");
-                GlobalVariable.set("IgnoreChanges", oldChanges - 1);
+        global_module.debounce(() => {
+            if (GlobalVariable.get('IgnoreChanges') !== 0) {
+                let oldChanges = GlobalVariable.get('IgnoreChanges');
+                GlobalVariable.set('IgnoreChanges', oldChanges - 1);
                 return;
             }
             ProcessText(textarea);
