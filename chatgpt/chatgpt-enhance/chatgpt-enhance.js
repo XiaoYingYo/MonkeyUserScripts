@@ -167,17 +167,33 @@ function createOrShowClearButton(Show = null) {
 }
 
 function addTextBase() {
-    let css = `.text-base {
-        max-width: 92%;
-    }`;
     let style = $('body').find('style[id="text-base"]').eq(0);
     if (style.length != 0) {
         return;
     }
     style = document.createElement('style');
     style.id = 'text-base';
+    let css = `.text-base {
+        max-width: 92%;
+    }`;
     style.innerHTML = css;
     document.body.appendChild(style);
+}
+
+async function initUseElement() {
+    if (globalVariable.get('NewChatHistoryElement') != null) {
+        return;
+    }
+    let ChatHistoryElement = $('div[class*="items-center"][class*="text"]').eq(0);
+    globalVariable.set('NewChatHistoryElement', ChatHistoryElement);
+    let newChat = ChatHistoryElement.parent().prev().prev().eq(0);
+    if (newChat[0].tagName !== 'A') {
+        newChat = newChat.find('a').eq(0);
+    }
+    newChat = newChat.eq(0);
+    globalVariable.set('NewChatElement', newChat);
+    await InitSvg();
+    createOrShowClearButton();
 }
 
 (async () => {
@@ -225,21 +241,7 @@ function addTextBase() {
                 globalVariable.set('rH', rH);
             })();
         }
-        (async () => {
-            if (globalVariable.get('NewChatHistoryElement') != null) {
-                return;
-            }
-            let ChatHistoryElement = $('div[class*="items-center"][class*="text"]').eq(0);
-            globalVariable.set('NewChatHistoryElement', ChatHistoryElement);
-            let newChat = ChatHistoryElement.parent().prev().prev().eq(0);
-            if (newChat[0].tagName !== 'A') {
-                newChat = newChat.find('a').eq(0);
-            }
-            newChat = newChat.eq(0);
-            globalVariable.set('NewChatElement', newChat);
-            await InitSvg();
-            createOrShowClearButton();
-        })();
+        initUseElement();
         _object.text = JSON.stringify(json);
         return _object;
     });
