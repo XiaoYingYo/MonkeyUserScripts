@@ -201,7 +201,7 @@ async function initUseElement() {
     let ChatHistoryElement = $('div[class*="items-center"][class*="text"]').eq(0);
     globalVariable.set('NewChatHistoryElement', ChatHistoryElement);
     let newChat = ChatHistoryElement.parent().prev().prev().eq(0);
-    if (newChat[0].tagName !== 'A') {
+    if (newChat.length != 0 && newChat[0].tagName !== 'A') {
         newChat = newChat.find('a').eq(0);
     }
     newChat = newChat.eq(0);
