@@ -1,21 +1,21 @@
 // ==UserScript==
-// @name        Chatgpt Enhance
-// @name:en     Chatgpt Enhance
-// @name:zh-CN  Chatgpt 增强
-// @name:zh-TW  Chatgpt 增強
-// @name:ja     Chatgpt 拡張
-// @name:ko     Chatgpt 향상
-// @name:de     Chatgpt verbessern
-// @name:fr     Chatgpt améliorer
-// @name:es     Chatgpt mejorar
-// @name:pt     Chatgpt melhorar
-// @name:ru     Chatgpt улучшить
-// @name:it     Chatgpt migliorare
-// @name:tr     Chatgpt geliştirmek
-// @name:ar     Chatgpt تحسين
-// @name:th     Chatgpt ปรับปรุง
-// @name:vi     Chatgpt cải thiện
-// @name:id     Chatgpt meningkatkan
+// @name        ChatGPT Enhance
+// @name:en     ChatGPT Enhance
+// @name:zh-CN  ChatGPT 增强
+// @name:zh-TW  ChatGPT 增強
+// @name:ja     ChatGPT 拡張
+// @name:ko     ChatGPT 향상
+// @name:de     ChatGPT verbessern
+// @name:fr     ChatGPT améliorer
+// @name:es     ChatGPT mejorar
+// @name:pt     ChatGPT melhorar
+// @name:ru     ChatGPT улучшить
+// @name:it     ChatGPT migliorare
+// @name:tr     ChatGPT geliştirmek
+// @name:ar     ChatGPT تحسين
+// @name:th     ChatGPT ปรับปรุง
+// @name:vi     ChatGPT cải thiện
+// @name:id     ChatGPT meningkatkan
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @grant       none
@@ -38,6 +38,7 @@
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @require     https://greasyfork.org/scripts/465483-hookrequestandfetch/code/hookRequestAndFetch.js
+// @require     https://greasyfork.org/scripts/465508-translatelanguage/code/translateLanguage.js
 // @description 宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复 & 界面控件翻译
 // @description:en Wide dialog & Clear chat history & Declare specified language reply to GPT & Interface control translation
 // @description:zh-CN  宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复 & 界面控件翻译
@@ -126,46 +127,85 @@ function clearChats() {
         if (lis.length === 0) {
             return;
         }
-        global_module.clickElement(globalVariable.get('NewChatElement')[0]);
         $(NewChatHistoryElement).find('ol').eq(0).find('li').hide();
         let f = await hookRequest.globalVariable.get('Fetch')(url, { method, headers, body: JSON.stringify(body) });
         await f.json();
+        global_module.clickElement(globalVariable.get('NewChatElement')[0]);
     })();
 }
 
-function createOrShowClearButton(Show = null) {
-    if (document.getElementById('_clearButton_') != null) {
-        if (Show != null) document.getElementById('_clearButton_').style.display = Show;
+function createButtonOrShow(id = null, Show = null) {
+    if (!id) {
+        return;
+    }
+    if (document.getElementById(id) != null) {
+        if (Show != null) document.getElementById(id).style.display = Show;
         return;
     }
     let border = document.querySelectorAll('div[class^="border-"]');
     border = border[border.length - 1];
     let div = document.createElement('div');
-    div.id = '_clearButton_';
+    div.id = id;
     let className = border.childNodes[0].className;
     div.className = className;
     border.insertBefore(div, border.childNodes[0]);
-    (async function () {
-        if (globalVariable.get('clearSvg') == null) {
-            if (!(await InitSvg())) {
-                return;
-            }
-        }
-        div.innerHTML = globalVariable.get('clearSvg')[0] + 'Clear Conversations';
-        div.name = 0;
-        div.addEventListener('click', function () {
-            let title = 'Clear Conversations';
-            if (div.name === 0) {
-                title = 'Confirm ' + title;
-                div.name = 1;
-            } else {
-                div.name = 0;
-                clearChats();
-            }
-            div.innerHTML = globalVariable.get('clearSvg')[div.name] + title;
-        });
-    })();
+    return div;
 }
+
+function createOrShowClearButton(Show = null) {
+    let div = createButtonOrShow('_clearButton_', Show);
+    div.innerHTML = globalVariable.get('clearSvg')[0] + 'Clear Conversations';
+    div.name = 0;
+    div.addEventListener('click', function () {
+        let title = 'Clear Conversations';
+        if (div.name === 0) {
+            title = 'Confirm ' + title;
+            div.name = 1;
+        } else {
+            div.name = 0;
+            clearChats();
+        }
+        div.innerHTML = globalVariable.get('clearSvg')[div.name] + title;
+    });
+}
+
+// function openDialog(title = '') {
+//     if (document.getElementById('_Dialog_') != null) {
+//         document.getElementById('_Dialog_').remove();
+//     }
+//     let html = `<div class="relative z-50" id="headlessui-dialog-:r2:" role="dialog" aria-modal="true" data-headlessui-state="open"><div class="fixed inset-0 bg-gray-500/90 transition-opacity dark:bg-gray-800/90"></div><div class="fixed inset-0 z-50 overflow-y-auto"><div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"><div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all dark:bg-gray-900 sm:my-8 sm:w-full sm:max-w-lg px-4 pb-4 pt-5 sm:p-6" id="headlessui-dialog-panel-:r3:" data-headlessui-state="open">${title}<div class="flex items-center justify-between" style='display:flex;justify-content: flex-end;'><div id='X' style='cursor:pointer;'>X</div><div class="flex items-center"><div class="text-center sm:text-left"></div></div><div></div></div><div id='C' class="prose dark:prose-invert"></div></div></div></div></div>`;
+//     let div = document.createElement('div');
+//     div.id = '_dialog_';
+//     div.innerHTML = html;
+//     document.body.appendChild(div);
+//     $(div)
+//         .find('#X')
+//         .eq(0)
+//         .click(() => {
+//             div.remove();
+//         });
+//     return $(div).find('#C').eq(0);
+// }
+
+// function addconfigOptions(div, op = {}) {
+//     if (!div || op == {}) {
+//         return;
+//     }
+// }
+
+// function configButton(Show = null) {
+//     let div = createButtonOrShow('_configButton_', Show);
+//     let svg = '<svg t="1683204209602" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3482" width="20" height="20"><path d="M82.448516 373.000258l3.534452 5.020903a230.135742 230.135742 0 0 1 0 277.900387 97.313032 97.313032 0 0 0 87.898838 155.515871l6.672517-0.726709a229.243871 229.243871 0 0 1 235.751225 139.396129 97.213935 97.213935 0 0 0 177.845678 3.336258l3.501419-7.531355a234.727226 234.727226 0 0 1 238.88929-134.639484 97.775484 97.775484 0 0 0 94.075871-148.513032l-4.294193-6.408258a241.465806 241.465806 0 0 1-5.384258-270.864516l6.276129-9.149936a97.775484 97.775484 0 0 0-84.925936-154.128516l-5.747613 0.462452a229.904516 229.904516 0 0 1-231.985548-127.70271l-5.219097-11.429161a97.874581 97.874581 0 0 0-176.590451-5.384258l-2.543484 5.384258a236.180645 236.180645 0 0 1-241.135484 139.528258l-5.186065-0.561549a97.313032 97.313032 0 0 0-91.43329 150.494968z m42.314323-104.976516a64.280774 64.280774 0 0 1 45.617548-12.651355l5.219097 0.561548a269.212903 269.212903 0 0 0 274.828387-159.083354 64.842323 64.842323 0 0 1 118.684903 0l1.486452 3.435354a262.936774 262.936774 0 0 0 269.60929 155.251613 64.743226 64.743226 0 0 1 60.019613 101.739355l-0.891871 1.255226a274.498065 274.498065 0 0 0-5.747613 308.422194l6.639484 9.711483a64.743226 64.743226 0 0 1-60.019613 101.739355 267.759484 267.759484 0 0 0-272.516129 153.6l-3.501419 7.564387a64.181677 64.181677 0 0 1-117.429678-2.180129 262.276129 262.276129 0 0 0-260.855742-160.305548l-15.525161 1.486452a64.280774 64.280774 0 0 1-58.037677-102.730323 263.168 263.168 0 0 0 0-317.770323 64.280774 64.280774 0 0 1 12.420129-90.045935z" fill="#0072FF" p-id="3483"></path><path d="M518.342194 346.310194a162.386581 162.386581 0 1 0 0 324.773161 162.386581 162.386581 0 0 0 0-324.773161z m0 33.032258a129.354323 129.354323 0 1 1 0 258.708645 129.354323 129.354323 0 0 1 0-258.708645z" fill="#0072FF" p-id="3484"></path></svg>';
+//     div.innerHTML = svg + 'Config';
+//     div.addEventListener('click', () => {
+//         let div = openDialog();
+//         addconfigOptions(div, {
+//             title: 'Response Language',
+//             extraData: window['_translateLanguage_'],
+//             components: 'select'
+//         });
+//     });
+// }
 
 function addTextBase() {
     let style = $('body').find('style[id="text-base"]').eq(0);
@@ -195,6 +235,7 @@ async function initUseElement() {
     globalVariable.set('NewChatElement', newChat);
     await InitSvg();
     createOrShowClearButton();
+    // configButton();
 }
 
 (async () => {
@@ -216,6 +257,23 @@ async function initUseElement() {
         if (method != 'POST') {
             return;
         }
+        let additional = 'If I use `' + browserLanguage + '` to communicate with you, then please also use `' + browserLanguage + '` to reply me';
+        let body = JSON.parse(_object.args[1].body);
+        let messages = body.messages;
+        if (messages instanceof Array) {
+            for (let i = 0; i < messages.length; i++) {
+                let parts = messages[i].content.parts;
+                if (parts instanceof Array) {
+                    for (let j = 0; j < parts.length; j++) {
+                        if (parts[j].indexOf('additional') != -1) {
+                            continue;
+                        }
+                        parts[j] = parts[j] + '\n' + additional;
+                    }
+                }
+            }
+        }
+        _object.args[1].body = JSON.stringify(body);
         setTimeout(() => {
             addTextBase();
         }, 100);
