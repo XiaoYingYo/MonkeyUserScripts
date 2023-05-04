@@ -38,24 +38,24 @@
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @require     https://greasyfork.org/scripts/465483-hookrequestandfetch/code/hookRequestAndFetch.js
-// @require     https://greasyfork.org/scripts/465508-translatelanguage/code/translateLanguage.js
-// @description 宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复 & 界面控件翻译
-// @description:en Wide dialog & Clear chat history & Declare specified language reply to GPT & Interface control translation
-// @description:zh-CN  宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复 & 界面控件翻译
-// @description:zh-TW 寬度對話框 & 一鍵清空聊天記錄 & 向GPT聲明指定語言回復 & 界面控件翻譯
-// @description:ja 幅広いダイアログ & チャット履歴をクリア & 指定された言語でGPTに宣言する & インターフェースコントロールの翻訳
-// @description:ko 넓은 대화 상자 & 채팅 기록 지우기 & 지정된 언어로 GPT에 선언 & 인터페이스 컨트롤 번역
-// @description:de Breites Dialogfeld & Chatverlauf löschen & GPT in angegebener Sprache deklarieren & Übersetzung der Schnittstellensteuerung
-// @description:fr Boîte de dialogue large & Effacer l'historique du chat & Déclarer la réponse dans la langue spécifiée à GPT & Traduction du contrôle de l'interface
-// @description:es Cuadro de diálogo ancho & Borrar el historial del chat & Declarar respuesta en el idioma especificado a GPT & Traducción del control de la interfaz
-// @description:pt Caixa de diálogo ampla & Limpar o histórico do bate-papo & Declarar resposta no idioma especificado ao GPT & Tradução do controle da interface
-// @description:ru Широкий диалоговое окно & Очистить историю чата & Объявить ответ на указанном языке в GPT & Перевод элемента управления интерфейсом
-// @description:it Ampia finestra di dialogo & Cancella la cronologia della chat & Dichiarare la risposta nella lingua specificata a GPT & Traduzione del controllo dell'interfaccia
-// @description:tr Geniş diyalog & Sohbet geçmişini temizle & GPT'ye belirtilen dilde yanıt bildir & Arayüz kontrolünün çevirisi
-// @description:ar مربع حوار واسع & مسح سجل المحادثة & إعلان الرد باللغة المحددة إلى GPT & ترجمة تحكم الواجهة
-// @description:th กล่องโต้ตอบกว้าง & ล้างประวัติการแชท & ประกาศการตอบกลับในภาษาที่ระบุไว้กับ GPT & การแปลควบคุมอินเตอร์เฟซ
-// @description:vi Hộp thoại rộng & Xóa lịch sử trò chuyện & Khai báo trả lời bằng ngôn ngữ được chỉ định cho GPT & Dịch điều khiển giao diện
-// @description:id Kotak dialog lebar & Hapus riwayat obrolan & Nyatakan balasan dalam bahasa yang ditentukan ke GPT & Terjemahan kontrol antarmuka
+// @require     https://greasyfork.org/scripts/465512-google-translate-engine/code/GoogleTranslateEngine.js
+// @description 宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复
+// @description:en Wide dialog & Clear chat history & Declare specified language reply to GPT
+// @description:zh-CN  宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复
+// @description:zh-TW 寬度對話框 & 一鍵清空聊天記錄 & 向GPT聲明指定語言回復
+// @description:ja 幅広いダイアログ & チャット履歴をクリア & 指定された言語でGPTに宣言する
+// @description:ko 넓은 대화 상자 & 채팅 기록 지우기 & 지정된 언어로 GPT에 선언
+// @description:de Breites Dialogfeld & Chatverlauf löschen & GPT in angegebener Sprache deklarieren
+// @description:fr Boîte de dialogue large & Effacer l'historique du chat & Déclarer la réponse dans la langue spécifiée à GPT
+// @description:es Cuadro de diálogo ancho & Borrar el historial del chat & Declarar respuesta en el idioma especificado a GPT
+// @description:pt Caixa de diálogo ampla & Limpar o histórico do bate-papo & Declarar resposta no idioma especificado ao GPT
+// @description:ru Широкий диалоговое окно & Очистить историю чата & Объявить ответ на указанном языке в GPT
+// @description:it Ampia finestra di dialogo & Cancella la cronologia della chat & Dichiarare la risposta nella lingua specificata a GPT
+// @description:tr Geniş diyalog & Sohbet geçmişini temizle & GPT'ye belirtilen dilde yanıt bildir
+// @description:ar مربع حوار واسع & مسح سجل المحادثة & إعلان الرد باللغة المحددة إلى GPT
+// @description:th กล่องโต้ตอบกว้าง & ล้างประวัติการแชท & ประกาศการตอบกลับในภาษาที่ระบุไว้กับ GPT
+// @description:vi Hộp thoại rộng & Xóa lịch sử trò chuyện & Khai báo trả lời bằng ngôn ngữ được chỉ định cho GPT
+// @description:id Kotak dialog lebar & Hapus riwayat obrolan & Nyatakan balasan dalam bahasa yang ditentukan ke GPT
 // ==/UserScript==
 
 var global_module = window['global_module'];
@@ -109,7 +109,7 @@ function clearChats() {
     let method = 'PATCH';
     let Token = globalVariable.get('accessToken');
     if (Token == null) {
-        alert('Token is null, please refresh the page and try again.');
+        alert('Token is null, please refresh the page and try again.Maybe the execution timing of the oil monkey script is set incorrectly.Please set to `document-start`!');
         return;
     }
     let headers = {
@@ -152,9 +152,18 @@ function createButtonOrShow(id = null, Show = null) {
     return div;
 }
 
+async function getbrowserLanguageStr(text) {
+    return new Promise(async (resolve) => {
+        let r = await globalVariable.get('TranslateMachine').Translate(text, 'auto', browserLanguage, true);
+        resolve(r.result);
+    });
+}
+
 function createOrShowClearButton(Show = null) {
     let div = createButtonOrShow('_clearButton_', Show);
-    div.innerHTML = globalVariable.get('clearSvg')[0] + 'Clear Conversations';
+    (async () => {
+        div.innerHTML = globalVariable.get('clearSvg')[0] + (await getbrowserLanguageStr('Clear Conversations'));
+    })();
     div.name = 0;
     div.addEventListener('click', function () {
         let title = 'Clear Conversations';
@@ -165,7 +174,9 @@ function createOrShowClearButton(Show = null) {
             div.name = 0;
             clearChats();
         }
-        div.innerHTML = globalVariable.get('clearSvg')[div.name] + title;
+        (async () => {
+            div.innerHTML = globalVariable.get('clearSvg')[div.name] + (await getbrowserLanguageStr(title));
+        })();
     });
 }
 
@@ -239,6 +250,8 @@ async function initUseElement() {
 }
 
 (async () => {
+    // eslint-disable-next-line no-undef
+    globalVariable.set('TranslateMachine', new TranslateMachine());
     hookRequest.FetchCallback.add('/api/auth/session', (_object, period) => {
         if (period !== 'done') {
             return;
@@ -257,7 +270,7 @@ async function initUseElement() {
         if (method != 'POST') {
             return;
         }
-        let additional = 'If I use `' + browserLanguage + '` to communicate with you, then please also use `' + browserLanguage + '` to reply me';
+        let additional = 'Please reply me with ' + browserLanguage;
         let body = JSON.parse(_object.args[1].body);
         let messages = body.messages;
         if (messages instanceof Array) {
