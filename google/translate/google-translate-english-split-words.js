@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://translate.google.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.19
+// @version     XiaoYing_2023.05.20
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -76,16 +76,17 @@ ProcessRules.set('UppercaseSplitWords', (Text) => {
 
 function ProcessText(textarea) {
     if (GlobalVariable.get('InputIng') === 1) {
-        return false;
+        return null;
     }
     let text = textarea.val();
     if (!containsEnglishLetter(text)) {
-        return false;
+        return null;
     }
     if (text == '') {
-        return false;
+        return null;
     }
     GlobalVariable.set('InputIng', 1);
+    let oldLength = text.length;
     let newText = text;
     for (const item of ProcessRules.values()) {
         newText = item(newText);
@@ -95,13 +96,14 @@ function ProcessText(textarea) {
     }
     if (newText === text) {
         GlobalVariable.set('InputIng', 0);
-        return false;
+        return null;
     }
+    let newLength = newText.length;
     global_module.AnalogInput.AnalogInput(textarea[0], newText);
     GlobalVariable.set('InputIng', 0);
     let oldChanges = GlobalVariable.get('IgnoreChanges');
     GlobalVariable.set('IgnoreChanges', oldChanges + 1);
-    return true;
+    return newLength - oldLength;
 }
 
 function convertToTitleCase(Text, separator) {
@@ -144,7 +146,15 @@ async function main() {
                 GlobalVariable.set('IgnoreChanges', oldChanges - 1);
                 return;
             }
-            ProcessText(textarea);
+            let selectionStart = textarea.prop('selectionStart');
+            let selectionEnd = textarea.prop('selectionEnd');
+            let index = ProcessText(textarea);
+            if (index && index != 0) {
+                selectionStart += index;
+                selectionEnd += index;
+            }
+            textarea.prop('selectionStart', selectionStart);
+            textarea.prop('selectionEnd', selectionEnd);
             textarea.focus();
         }),
         1000
