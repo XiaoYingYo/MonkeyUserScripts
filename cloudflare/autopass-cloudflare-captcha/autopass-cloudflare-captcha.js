@@ -12,7 +12,6 @@
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @icon         https://www.google.com/s2/favicons?sz=48&domain=cloudflare.com
 // @icon64       https://www.google.com/s2/favicons?sz=64&domain=cloudflare.com
-// @downloadURL  https://greasyfork.org/scripts/464785-autopass-cloudflare-captcha/code/Autopass%20Cloudflare%20CAPTCHA.user.js
 // @description Violentmonkey Scripts
 // ==/UserScript==
 
