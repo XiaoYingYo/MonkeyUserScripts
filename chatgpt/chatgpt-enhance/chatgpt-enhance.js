@@ -59,6 +59,7 @@
 
 var global_module = window['global_module'];
 var globalVariable = new Map();
+var browserLanguage = navigator.language;
 var hookRequest = unsafeWindow['__hookRequest__'];
 
 async function InitSvg() {
