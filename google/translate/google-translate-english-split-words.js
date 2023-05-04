@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://translate.google.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.18
+// @version     XiaoYing_2023.05.19
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -145,6 +145,7 @@ async function main() {
                 return;
             }
             ProcessText(textarea);
+            textarea.focus();
         }),
         1000
     );
