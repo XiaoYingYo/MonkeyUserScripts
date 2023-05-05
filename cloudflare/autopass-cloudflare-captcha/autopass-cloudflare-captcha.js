@@ -1,10 +1,8 @@
 // ==UserScript==
 // @name         Autopass Cloudflare CAPTCHA
 // @namespace    Violentmonkey Scripts
-// @match        https://challenges.cloudflare.com/*
-// @match        https://chat.openai.com/*
-// @match        https://freegpt.one/*
-// @version      XiaoYing_2023.05.24
+// @match        *://*/*
+// @version      XiaoYing_2023.05.24.1
 // @grant        none
 // @run-at       document-start
 // @author       github.com @XiaoYingYo
