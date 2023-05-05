@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.1
+// @version     XiaoYing_2023.05.25.2
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -128,9 +128,8 @@ function clearChats() {
             return;
         }
         $(NewChatHistoryElement).find('ol').eq(0).find('li').hide();
-        let f = await hookRequest.globalVariable.get('Fetch')(url, { method, headers, body: JSON.stringify(body) });
-        await f.json();
         global_module.clickElement(globalVariable.get('NewChatElement')[0]);
+        hookRequest.globalVariable.get('Fetch')(url, { method, headers, body: JSON.stringify(body) });
     })();
 }
 
@@ -159,6 +158,17 @@ async function getbrowserLanguageStr(text) {
     });
 }
 
+function conversationsToTrashCan() {
+    let conversations = globalVariable.get('cacheConversations');
+    conversations.forEach((value, key) => {
+        let id = key;
+        if (!globalVariable.get('trashCanConversations').has(id)) {
+            globalVariable.get('trashCanConversations').set(id, '');
+        }
+    });
+    globalVariable.set('cacheConversations', new Map());
+}
+
 function createOrShowClearButton(Show = null) {
     let div = createButtonOrShow('_clearButton_', Show);
     (async () => {
@@ -172,6 +182,7 @@ function createOrShowClearButton(Show = null) {
             div.name = 1;
         } else {
             div.name = 0;
+            conversationsToTrashCan();
             clearChats();
         }
         (async () => {
@@ -210,6 +221,9 @@ async function initUseElement() {
     createOrShowClearButton();
     // configButton();
 }
+
+globalVariable.set('cacheConversations', new Map());
+globalVariable.set('trashCanConversations', new Map());
 
 (async () => {
     // eslint-disable-next-line no-undef
@@ -257,13 +271,34 @@ async function initUseElement() {
         if (period !== 'done') {
             return;
         }
+        let method = _object.args[1].method;
+        if (method != 'GET') {
+            return;
+        }
         addTextBase();
         let url = _object.args[0];
         if (url.indexOf('?') == -1) {
             return;
         }
         let json = JSON.parse(_object.text);
-        if (json.total === 0) {
+        if (json.items.length !== 0) {
+            let i = 0;
+            while (i != json.items.length) {
+                let id = json.items[i].id;
+                if (globalVariable.get('trashCanConversations').has(id)) {
+                    json.items.splice(i, 1);
+                    json.total--;
+                    continue;
+                }
+                if (globalVariable.get('cacheConversations').has(id)) {
+                    i++;
+                    continue;
+                }
+                globalVariable.get('cacheConversations').set(id, json.items[i]);
+                i++;
+            }
+        }
+        if (json.items.length === 0) {
             let title = '{_reserveHistory_}';
             json.total = 0;
             let time = new Date().toISOString();
