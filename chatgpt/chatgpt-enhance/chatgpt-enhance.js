@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.3
+// @version     XiaoYing_2023.05.25.4
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -123,11 +123,19 @@ function clearChats() {
         if (rHElement && $(NewChatHistoryElement).find(rHElement).length > 0) {
             return;
         }
-        let lis = $(NewChatHistoryElement).find('ol').eq(0).find('li');
-        if (lis.length === 0) {
-            return;
-        }
-        $(NewChatHistoryElement).find('ol').eq(0).find('li').hide();
+        let hide = function (tryOne) {
+            $(NewChatHistoryElement).parents('nav').find('ol').eq(0).find('li[class]').hide();
+            if (tryOne) {
+                setTimeout(() => {
+                    hide(false);
+                }, 1000);
+            }
+        };
+        hide(true);
+        conversationsToTrashCan();
+        setTimeout(() => {
+            hide(true);
+        }, 1000);
         global_module.clickElement(globalVariable.get('NewChatElement')[0]);
         hookRequest.globalVariable.get('Fetch')(url, { method, headers, body: JSON.stringify(body) });
     })();
@@ -153,24 +161,23 @@ function createButtonOrShow(id = null, Show = null) {
 
 async function getbrowserLanguageStr(text) {
     return new Promise(async (resolve) => {
-        let r = await globalVariable.get('TranslateMachine').Translate(text, 'auto', browserLanguage, true);
-        resolve(r.result);
+        resolve((await globalVariable.get('TranslateMachine').Translate(text, 'auto', browserLanguage, true)).result);
     });
 }
 
 function conversationsToTrashCan() {
     let conversations = globalVariable.get('cacheConversations');
     conversations.forEach((value, key) => {
-        let id = key;
-        if (!globalVariable.get('trashCanConversations').has(id)) {
-            globalVariable.get('trashCanConversations').set(id, '');
-        }
+        globalVariable.get('trashCanConversations').set(key, '');
     });
     globalVariable.set('cacheConversations', new Map());
 }
 
 function createOrShowClearButton(Show = null) {
     let div = createButtonOrShow('_clearButton_', Show);
+    if (!div) {
+        return;
+    }
     (async () => {
         div.innerHTML = globalVariable.get('clearSvg')[0] + (await getbrowserLanguageStr('Clear Conversations'));
     })();
@@ -182,7 +189,6 @@ function createOrShowClearButton(Show = null) {
             div.name = 1;
         } else {
             div.name = 0;
-            conversationsToTrashCan();
             clearChats();
         }
         (async () => {
@@ -206,20 +212,28 @@ function addTextBase() {
 }
 
 async function initUseElement() {
-    if (globalVariable.get('NewChatHistoryElement') != null) {
-        return;
-    }
     let ChatHistoryElement = $('div[class*="items-center"][class*="text"]').eq(0);
     globalVariable.set('NewChatHistoryElement', ChatHistoryElement);
-    let newChat = ChatHistoryElement.parent().prev().prev().eq(0);
-    if (newChat.length != 0 && newChat[0].tagName !== 'A') {
-        newChat = newChat.find('a').eq(0);
+    let newChat = ChatHistoryElement.parents('nav').eq(0).find('a').eq(0);
+    if (newChat.length === 0) {
+        setTimeout(() => {
+            initUseElement();
+        }, 1000);
+        return;
     }
     newChat = newChat.eq(0);
     globalVariable.set('NewChatElement', newChat);
     await InitSvg();
     createOrShowClearButton();
-    // configButton();
+}
+
+function getContentMainBodyHistoricalDialogue(_object, period) {
+    if (period !== 'done') {
+        return;
+    }
+    setTimeout(() => {
+        initUseElement();
+    }, 1000);
 }
 
 globalVariable.set('cacheConversations', new Map());
@@ -239,14 +253,18 @@ globalVariable.set('trashCanConversations', new Map());
         globalVariable.set('accessToken', accessToken);
     });
     hookRequest.FetchCallback.add('/backend-api/conversation', (_object, period) => {
-        if (period === 'done') {
+        if ('done' === period) {
+            return;
+        }
+        if ('doing' === period) {
             return;
         }
         let method = _object.args[1].method;
         if (method != 'POST') {
             return;
         }
-        let additional = 'Please reply me with ' + browserLanguage;
+        let additional = 'Please reply me with ';
+        let additionals = additional + browserLanguage;
         let body = JSON.parse(_object.args[1].body);
         let messages = body.messages;
         if (messages instanceof Array) {
@@ -254,10 +272,10 @@ globalVariable.set('trashCanConversations', new Map());
                 let parts = messages[i].content.parts;
                 if (parts instanceof Array) {
                     for (let j = 0; j < parts.length; j++) {
-                        if (parts[j].indexOf('additional') != -1) {
+                        if (parts[j].indexOf(additional) != -1) {
                             continue;
                         }
-                        parts[j] = parts[j] + '\n' + additional;
+                        parts[j] = parts[j] + '\n' + additionals;
                     }
                 }
             }
@@ -269,10 +287,6 @@ globalVariable.set('trashCanConversations', new Map());
     });
     hookRequest.FetchCallback.add('/backend-api/conversations', (_object, period) => {
         if (period !== 'done') {
-            return;
-        }
-        let method = _object.args[1].method;
-        if (method != 'GET') {
             return;
         }
         addTextBase();
@@ -294,6 +308,7 @@ globalVariable.set('trashCanConversations', new Map());
                     i++;
                     continue;
                 }
+                hookRequest.FetchCallback.add('/backend-api/conversation/' + id, getContentMainBodyHistoricalDialogue);
                 globalVariable.get('cacheConversations').set(id, json.items[i]);
                 i++;
             }
