@@ -18,7 +18,7 @@
 // @name:id     ChatGPT meningkatkan
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
-// @version     XiaoYing_2023.05.25.19
+// @version     XiaoYing_2023.05.25.20
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -36,7 +36,7 @@
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
-// @require     https://greasyfork.org/scripts/465483-hookrequestandfetch/code/hookRequestAndFetch.js
+// @require     https://greasyfork.org/scripts/465483-hookfetch/code/hookFetch.js
 // @require     https://greasyfork.org/scripts/465512-google-translate-engine/code/GoogleTranslateEngine.js
 // @description 宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复
 // @description:en Wide dialog & Clear chat history & Declare specified language reply to GPT

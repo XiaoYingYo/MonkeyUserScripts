@@ -4,7 +4,7 @@
 // @name:zh-TW   抖音增強
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
-// @version     XiaoYing_2023.05.25.19
+// @version     XiaoYing_2023.05.25.20
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue

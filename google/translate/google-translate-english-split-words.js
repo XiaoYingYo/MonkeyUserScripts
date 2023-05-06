@@ -18,7 +18,7 @@
 // @name:id      Google Translate English split words
 // @namespace   Violentmonkey Scripts
 // @match       *://translate.google.com/*
-// @version     XiaoYing_2023.05.25.19
+// @version     XiaoYing_2023.05.25.20
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
