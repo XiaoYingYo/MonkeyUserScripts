@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     1.0
+// @version     XiaoYing_2023.05.25.4
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -23,7 +23,7 @@
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
-// @require https://scriptcat.org/lib/637/1.2.4/ajaxHooker.js
+// @require     https://greasyfork.org/scripts/465643-ajaxhookerlatest/code/ajaxHookerLatest.js
 // @description 抖音无感知去广告 & 跳过直播间
 // @description:zh-CN 抖音无感知去广告 & 跳过直播间
 // @description:zh-TW 抖音無感知去廣告 & 跳過直播間
