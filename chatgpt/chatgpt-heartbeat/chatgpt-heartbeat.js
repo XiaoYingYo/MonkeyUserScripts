@@ -3,8 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://freegpt.one/*
-// @version     XiaoYing_2023.05.25.18
-// @grant       none
+// @version     XiaoYing_2023.05.25.19
 // @run-at      document-body
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
@@ -15,7 +14,6 @@
 // @description Violentmonkey Scripts
 // ==/UserScript==
 
-var global_module = window['global_module'];
 
 let GlobalVariable = {};
 

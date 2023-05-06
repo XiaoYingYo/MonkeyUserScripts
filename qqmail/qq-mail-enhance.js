@@ -2,8 +2,7 @@
 // @name        QQ邮箱增强
 // @namespace   Violentmonkey Scripts
 // @match       *://mail.qq.com/*
-// @grant       none
-// @version     XiaoYing_2023.05.25.18
+// @version     XiaoYing_2023.05.25.19
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -24,7 +23,6 @@
 // @description Violentmonkey Scripts
 // ==/UserScript==
 
-var global_module = window['global_module'];
 
 var Func = new Map();
 Func.set('delMail', async () => {

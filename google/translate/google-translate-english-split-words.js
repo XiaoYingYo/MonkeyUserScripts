@@ -18,8 +18,7 @@
 // @name:id      Google Translate English split words
 // @namespace   Violentmonkey Scripts
 // @match       *://translate.google.com/*
-// @grant       none
-// @version     XiaoYing_2023.05.25.18
+// @version     XiaoYing_2023.05.25.19
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -56,7 +55,6 @@
 // @description:id Violentmonkey Scripts
 // ==/UserScript==
 
-var global_module = window['global_module'];
 
 var GlobalVariable = new Map();
 

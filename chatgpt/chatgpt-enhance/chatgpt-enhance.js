@@ -18,8 +18,7 @@
 // @name:id     ChatGPT meningkatkan
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
-// @grant       none
-// @version     XiaoYing_2023.05.25.18
+// @version     XiaoYing_2023.05.25.19
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -58,7 +57,6 @@
 // @description:id Kotak dialog lebar & Hapus riwayat obrolan & Nyatakan balasan dalam bahasa yang ditentukan ke GPT
 // ==/UserScript==
 
-var global_module = window['global_module'];
 var globalVariable = new Map();
 var browserLanguage = navigator.language;
 var hookRequest = unsafeWindow['__hookRequest__'];

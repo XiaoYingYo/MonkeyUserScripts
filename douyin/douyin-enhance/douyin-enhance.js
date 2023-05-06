@@ -4,8 +4,7 @@
 // @name:zh-TW   抖音增強
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
-// @grant       none
-// @version     XiaoYing_2023.05.25.18
+// @version     XiaoYing_2023.05.25.19
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -31,7 +30,6 @@
 
 // eslint-disable-next-line no-undef
 ajaxHooker.protect();
-var global_module = window['global_module'];
 var globalVariable = new Map();
 globalVariable.set('cacheVideoId', new Map());
 
