@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.11
+// @version     XiaoYing_2023.05.25.12
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -25,9 +25,9 @@
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @require     https://greasyfork.org/scripts/465483-hookfetch/code/hookFetch.js
 // @require     https://greasyfork.org/scripts/465643-ajaxhookerlatest/code/ajaxHookerLatest.js
-// @description 抖音无感知去广告 & 跳过直播间
-// @description:zh-CN 抖音无感知去广告 & 跳过直播间
-// @description:zh-TW 抖音無感知去廣告 & 跳過直播間
+// @description 抖音无感知去广告 & 跳过直播间 & 跳过购物
+// @description:zh-CN 抖音无感知去广告 & 跳过直播间 & 跳过购物
+// @description:zh-TW 抖音無感知去廣告 & 跳過直播間 & 跳過購物
 // ==/UserScript==
 
 // eslint-disable-next-line no-unused-vars
