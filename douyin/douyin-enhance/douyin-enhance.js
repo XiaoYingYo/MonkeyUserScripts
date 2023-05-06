@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.17
+// @version     XiaoYing_2023.05.25.18
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -80,9 +80,6 @@ function handleText(Text) {
                     continue;
                 }
             }
-            let DouYing_QQ759852125_use_wallpaper = localStorage.getItem('DouYing_QQ759852125_use_wallpaper') || false;
-            if (!DouYing_QQ759852125_use_shop) {
-            }
         }
         globalVariable.get('cacheVideoId').set(id, 0);
         i++;
@@ -122,7 +119,7 @@ function handleResponse(request) {
                 (async function () {
                     let oldJson = JSON.parse(res.text);
                     let oldAwemeList = oldJson['aweme_list'];
-                    let Num = localStorage.getItem('DouYing_QQ759852125_getAdditionalVideos') || 1;
+                    let Num = localStorage.getItem('DouYing_QQ759852125_getAdditionalVideos') || 2;
                     Num = parseInt(Num);
                     if (Num > 10) {
                         Num = 10;
