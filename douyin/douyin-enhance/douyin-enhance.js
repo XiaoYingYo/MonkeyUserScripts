@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.13
+// @version     XiaoYing_2023.05.25.14
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -23,7 +23,6 @@
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
-// @require     https://greasyfork.org/scripts/465483-hookfetch/code/hookFetch.js
 // @require     https://greasyfork.org/scripts/465643-ajaxhookerlatest/code/ajaxHookerLatest.js
 // @description 抖音无感知去广告 & 跳过直播间 & 跳过购物
 // @description:zh-CN 抖音无感知去广告 & 跳过直播间 & 跳过购物
@@ -34,32 +33,35 @@
 var global_module = window['global_module'];
 // eslint-disable-next-line no-unused-vars
 var globalVariable = new Map();
-const HookUrl = '/aweme/v1/web/tab/feed/';
 
 function handleText(Text) {
-    let json = JSON.parse(Text);
+    let json = null;
+    try {
+        json = JSON.parse(Text);
+    } catch (e) {
+        console.log(e);
+    }
+    if (!json) {
+        return;
+    }
     let aweme_list = json['aweme_list'];
     if (!aweme_list) {
         return;
     }
     let i = 0;
-    let dec = function () {
-        aweme_list.splice(i, 1);
-        i++;
-    };
     while (i < aweme_list.length) {
         let item = aweme_list[i];
         let cell_room = item['cell_room'];
         if (cell_room != null) {
             let DouYing_QQ759852125_use_cell_room = localStorage.getItem('DouYing_QQ759852125_use_cell_room') || false;
             if (!DouYing_QQ759852125_use_cell_room) {
-                dec();
+                aweme_list.splice(i, 1);
                 continue;
             }
         }
         let is_ads = item['is_ads'];
         if (is_ads) {
-            dec();
+            aweme_list.splice(i, 1);
             continue;
         }
         let anchor_info = item['anchor_info'];
@@ -68,39 +70,31 @@ function handleText(Text) {
             if (anchor_info_type === 3) {
                 let DouYing_QQ759852125_use_shop = localStorage.getItem('DouYing_QQ759852125_use_shop') || false;
                 if (!DouYing_QQ759852125_use_shop) {
-                    dec();
+                    aweme_list.splice(i, 1);
                     continue;
                 }
             }
         }
         i++;
     }
-    json['aweme_list'] = aweme_list;
-    // console.log(json);
+    console.log(json);
+    // debugger;
     return JSON.stringify(json);
 }
 
 function handleResponse(request) {
-    if (!request || request.url.indexOf(HookUrl) == -1) {
+    if (!request || request.url.indexOf('/aweme/v1/web/tab/feed/') == -1) {
         return;
     }
     request.response = (res) => {
-        const responseText = res.responseText;
-        res.responseText = new Promise((resolve) => {
-            let newText = responseText;
-            resolve(handleText(newText));
-        });
+        let responseText = res.responseText;
+        if (typeof responseText !== 'string') {
+            responseText = res.text;
+        }
+        res.responseText = handleText(responseText);
+        res.text = res.responseText;
     };
 }
 
 // eslint-disable-next-line no-undef
-ajaxHooker.filter([{ type: 'xhr', url: location.host, method: 'GET' }]);
-// eslint-disable-next-line no-undef
 ajaxHooker.hook(handleResponse);
-
-unsafeWindow['__hookRequest__'].FetchCallback.add(HookUrl, (_object, period) => {
-    if (period === 'done') {
-        _object.text = handleText(_object.text);
-    }
-    return _object;
-});
