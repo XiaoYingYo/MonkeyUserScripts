@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://freegpt.one/*
-// @version     XiaoYing_2023.05.25.20
+// @version     XiaoYing_2023.05.25.21
 // @run-at      document-body
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
