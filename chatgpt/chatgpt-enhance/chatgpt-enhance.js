@@ -18,7 +18,7 @@
 // @name:id     ChatGPT meningkatkan
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
-// @version     XiaoYing_2023.05.25.21
+// @version     XiaoYing_2023.05.25.22
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -36,7 +36,7 @@
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
-// @require     https://greasyfork.org/scripts/465483-hookfetch/code/hookFetch.js
+// @require     https://greasyfork.org/scripts/465643-ajaxhookerlatest/code/ajaxHookerLatest.js
 // @require     https://greasyfork.org/scripts/465512-google-translate-engine/code/GoogleTranslateEngine.js
 // @description 宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复
 // @description:en Wide dialog & Clear chat history & Declare specified language reply to GPT
@@ -57,9 +57,12 @@
 // @description:id Kotak dialog lebar & Hapus riwayat obrolan & Nyatakan balasan dalam bahasa yang ditentukan ke GPT
 // ==/UserScript==
 
+// eslint-disable-next-line no-undef
+ajaxHooker.protect();
+
 var globalVariable = new Map();
 var browserLanguage = navigator.language;
-var hookRequest = unsafeWindow['__hookRequest__'];
+var ignoreHookStr = '&ignoreHookStr';
 
 async function InitSvg() {
     return new Promise(async (resolve) => {
@@ -135,7 +138,8 @@ function clearChats() {
             hide(true);
         }, 1000);
         global_module.clickElement(globalVariable.get('NewChatElement')[0]);
-        hookRequest.globalVariable.get('Fetch')(url, { method, headers, body: JSON.stringify(body) });
+        url = global_module.SetUrlParm(url, 'ignoreHookStr', '0');
+        fetch(url + ignoreHookStr, { method, headers, body: JSON.stringify(body) });
     })();
 }
 
@@ -225,7 +229,7 @@ async function initUseElement() {
     createOrShowClearButton();
 }
 
-function getContentMainBodyHistoricalDialogue(_object, period) {
+function getContentMainBodyHistoricalDialogue(req, res, Text, period) {
     if (period !== 'done') {
         return;
     }
@@ -237,33 +241,28 @@ function getContentMainBodyHistoricalDialogue(_object, period) {
 globalVariable.set('cacheConversations', new Map());
 globalVariable.set('trashCanConversations', new Map());
 
-(async () => {
-    // eslint-disable-next-line no-undef
-    globalVariable.set('TranslateMachine', new TranslateMachine());
-    hookRequest.FetchCallback.add('/api/auth/session', (_object, period) => {
+var HookFun = new Map();
+HookFun.set('/api/auth/session', function (req, res, Text, period) {
+    if (period === 'preload') {
+        return;
+    }
+    new Promise(async (resolve) => {
         if (period !== 'done') {
             return;
         }
         addTextBase();
-        let json = JSON.parse(_object.text);
+        let json = JSON.parse(Text);
         let accessToken = json.accessToken;
         localStorage.setItem('ChatGPT.accessToken', accessToken);
         globalVariable.set('accessToken', accessToken);
+        resolve(null);
     });
-    hookRequest.FetchCallback.add('/backend-api/conversation', (_object, period) => {
-        if ('done' === period) {
-            return;
-        }
-        if ('doing' === period) {
-            return;
-        }
-        let method = _object.args[1].method;
-        if (method != 'POST') {
-            return;
-        }
+});
+HookFun.set('/backend-api/conversation', function (req, res, Text, period) {
+    if (period === 'preload') {
         let additional = 'Please reply me with ';
         let additionals = additional + browserLanguage;
-        let body = JSON.parse(_object.args[1].body);
+        let body = JSON.parse(req.data);
         let messages = body.messages;
         if (messages instanceof Array) {
             for (let i = 0; i < messages.length; i++) {
@@ -278,21 +277,33 @@ globalVariable.set('trashCanConversations', new Map());
                 }
             }
         }
-        _object.args[1].body = JSON.stringify(body);
+        req.data = JSON.stringify(body);
         setTimeout(() => {
             addTextBase();
         }, 100);
+        return;
+    }
+    return new Promise(async (resolve) => {
+        if (period !== 'done') {
+            return;
+        }
+        resolve(null);
     });
-    hookRequest.FetchCallback.add('/backend-api/conversations', (_object, period) => {
+});
+HookFun.set('/backend-api/conversations', function (req, res, Text, period) {
+    if (period === 'preload') {
+        return;
+    }
+    return new Promise(async (resolve) => {
         if (period !== 'done') {
             return;
         }
         addTextBase();
-        let url = _object.args[0];
+        let url = req.url;
         if (url.indexOf('?') == -1) {
             return;
         }
-        let json = JSON.parse(_object.text);
+        let json = JSON.parse(Text);
         if (json.items.length !== 0) {
             let i = 0;
             while (i != json.items.length) {
@@ -306,7 +317,7 @@ globalVariable.set('trashCanConversations', new Map());
                     i++;
                     continue;
                 }
-                hookRequest.FetchCallback.add('/backend-api/conversation/' + id, getContentMainBodyHistoricalDialogue);
+                HookFun.set('/backend-api/conversation/' + id, getContentMainBodyHistoricalDialogue);
                 globalVariable.get('cacheConversations').set(id, json.items[i]);
                 i++;
             }
@@ -324,7 +335,56 @@ globalVariable.set('trashCanConversations', new Map());
             })();
         }
         initUseElement();
-        _object.text = JSON.stringify(json);
-        return _object;
+        Text = JSON.stringify(json);
+        resolve(Text);
     });
-})();
+});
+
+function handleResponse(request) {
+    if (!request) {
+        return;
+    }
+    if (request.url.indexOf(ignoreHookStr) != -1) {
+        return;
+    }
+    let tempUrl = request.url;
+    if (tempUrl.indexOf('http') == -1 && tempUrl[0] == '/') {
+        tempUrl = location.origin + tempUrl;
+    }
+    let pathname = new URL(tempUrl).pathname;
+    let fun = HookFun.get(pathname);
+    if (!fun) {
+        return;
+    }
+    fun(request, null, null, 'preload');
+    request.response = (res) => {
+        let Type = 0;
+        let responseText = res.responseText;
+        if (typeof responseText !== 'string') {
+            Type = 1;
+            responseText = res.text;
+        }
+        if (typeof responseText !== 'string') {
+            Type = 2;
+            responseText = JSON.stringify(res.json);
+        }
+        const oldText = responseText;
+        res.responseText = new Promise(async (resolve) => {
+            let ret = await fun(request, res, responseText, 'done');
+            if (!ret) {
+                ret = oldText;
+            }
+            if (Type === 2) {
+                if (typeof ret === 'string') {
+                    ret = JSON.parse(ret);
+                }
+            }
+            resolve(ret);
+        });
+    };
+}
+
+// eslint-disable-next-line no-undef
+ajaxHooker.hook(handleResponse);
+// eslint-disable-next-line no-undef
+globalVariable.set('TranslateMachine', new TranslateMachine());
