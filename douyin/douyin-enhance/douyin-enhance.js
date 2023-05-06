@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.10
+// @version     XiaoYing_2023.05.25.11
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -63,10 +63,12 @@ function handleText(Text) {
             continue;
         }
         let anchor_info = item['anchor_info'];
-        let anchor_info_type = anchor_info['type'];
-        if (anchor_info_type === 3) {
-            dec();
-            continue;
+        if (anchor_info) {
+            let anchor_info_type = anchor_info['type'];
+            if (anchor_info_type === 3) {
+                dec();
+                continue;
+            }
         }
         i++;
     }
