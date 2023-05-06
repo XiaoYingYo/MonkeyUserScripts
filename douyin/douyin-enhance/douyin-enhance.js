@@ -80,6 +80,9 @@ function handleText(Text) {
                     continue;
                 }
             }
+            let DouYing_QQ759852125_use_wallpaper = localStorage.getItem('DouYing_QQ759852125_use_wallpaper') || false;
+            if (!DouYing_QQ759852125_use_shop) {
+            }
         }
         globalVariable.get('cacheVideoId').set(id, 0);
         i++;
