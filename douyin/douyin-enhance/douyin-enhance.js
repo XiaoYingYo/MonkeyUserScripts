@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.15
+// @version     XiaoYing_2023.05.25.16
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -24,14 +24,13 @@
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @require     https://greasyfork.org/scripts/465643-ajaxhookerlatest/code/ajaxHookerLatest.js
-// @description 抖音无感知去广告 & 跳过直播间 & 跳过购物
-// @description:zh-CN 抖音无感知去广告 & 跳过直播间 & 跳过购物
-// @description:zh-TW 抖音無感知去廣告 & 跳過直播間 & 跳過購物
+// @description 抖音无感知去广告 & 跳过直播间 & 跳过购物 & 作品视频列表获取更多数量
+// @description:zh-CN 抖音无感知去广告 & 跳过直播间 & 跳过购物 & 作品视频列表获取更多数量
+// @description:zh-TW 抖音無感知去廣告 & 跳過直播間 & 跳過購物 & 作品視頻列表獲取更多數量
 // ==/UserScript==
 
 // eslint-disable-next-line no-undef
 ajaxHooker.protect();
-// eslint-disable-next-line no-unused-vars
 var global_module = window['global_module'];
 // eslint-disable-next-line no-unused-vars
 var globalVariable = new Map();
@@ -85,17 +84,27 @@ function handleText(Text) {
 }
 
 function handleResponse(request) {
-    if (!request || request.url.indexOf('/aweme/v1/web/tab/feed/') == -1) {
+    if (!request) {
         return;
     }
-    request.response = (res) => {
-        let responseText = res.responseText;
-        if (typeof responseText !== 'string') {
-            responseText = res.text;
-        }
-        res.responseText = handleText(responseText);
-        res.text = res.responseText;
-    };
+    if (request.url.indexOf('/aweme/v1/web/aweme/post/') != -1) {
+        let count = global_module.GetUrlParm(request.url, 'count');
+        count = count * 4;
+        let newUrl = global_module.SetUrlParm(request.url, 'count', count);
+        request.url = newUrl;
+        return;
+    }
+    if (request.url.indexOf('/aweme/v1/web/tab/feed/') != -1) {
+        request.response = (res) => {
+            let responseText = res.responseText;
+            if (typeof responseText !== 'string') {
+                responseText = res.text;
+            }
+            res.responseText = handleText(responseText);
+            res.text = res.responseText;
+        };
+        return;
+    }
 }
 
 // eslint-disable-next-line no-undef

@@ -2,7 +2,7 @@
 // @name         Autopass Cloudflare CAPTCHA
 // @namespace    Violentmonkey Scripts
 // @match        *://*/*
-// @version      XiaoYing_2023.05.25.15
+// @version      XiaoYing_2023.05.25.16
 // @grant        none
 // @run-at       document-start
 // @author       github.com @XiaoYingYo

@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://mail.qq.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.15
+// @version     XiaoYing_2023.05.25.16
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
