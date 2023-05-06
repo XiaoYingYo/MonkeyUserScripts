@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.14
+// @version     XiaoYing_2023.05.25.15
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -29,6 +29,8 @@
 // @description:zh-TW 抖音無感知去廣告 & 跳過直播間 & 跳過購物
 // ==/UserScript==
 
+// eslint-disable-next-line no-undef
+ajaxHooker.protect();
 // eslint-disable-next-line no-unused-vars
 var global_module = window['global_module'];
 // eslint-disable-next-line no-unused-vars
