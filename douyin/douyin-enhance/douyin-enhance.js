@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.12
+// @version     XiaoYing_2023.05.25.13
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -66,8 +66,11 @@ function handleText(Text) {
         if (anchor_info) {
             let anchor_info_type = anchor_info['type'];
             if (anchor_info_type === 3) {
-                dec();
-                continue;
+                let DouYing_QQ759852125_use_shop = localStorage.getItem('DouYing_QQ759852125_use_shop') || false;
+                if (!DouYing_QQ759852125_use_shop) {
+                    dec();
+                    continue;
+                }
             }
         }
         i++;
