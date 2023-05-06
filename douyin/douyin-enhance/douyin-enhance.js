@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.8
+// @version     XiaoYing_2023.05.25.9
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -43,26 +43,35 @@ function handleText(Text) {
         return;
     }
     let i = 0;
+    let dec = function () {
+        aweme_list.splice(i, 1);
+        i++;
+    };
     while (i < aweme_list.length) {
         let item = aweme_list[i];
         let cell_room = item['cell_room'];
         if (cell_room != null) {
             let DouYing_QQ759852125_use_cell_room = localStorage.getItem('DouYing_QQ759852125_use_cell_room') || false;
             if (!DouYing_QQ759852125_use_cell_room) {
-                aweme_list.splice(i, 1);
-                i++;
+                dec();
                 continue;
             }
         }
         let is_ads = item['is_ads'];
         if (is_ads) {
-            aweme_list.splice(i, 1);
-            i++;
+            dec();
+            continue;
+        }
+        let anchor_info = item['anchor_info'];
+        let anchor_info_type = anchor_info['type'];
+        if (anchor_info_type === 3) {
+            dec();
             continue;
         }
         i++;
     }
     json['aweme_list'] = aweme_list;
+    // console.log(json);
     return JSON.stringify(json);
 }
 
