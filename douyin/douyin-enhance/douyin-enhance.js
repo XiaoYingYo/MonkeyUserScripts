@@ -5,7 +5,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
 // @grant       none
-// @version     XiaoYing_2023.05.25.4
+// @version     XiaoYing_2023.05.25.5
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -77,6 +77,6 @@ function handleResponse(request) {
 }
 
 // eslint-disable-next-line no-undef
-ajaxHooker.filter([{ type: 'xhr', url: location.host, method: 'GET' }]);
+ajaxHooker.filter([{ type: 'xhr', url: location.host, method: 'GET' }], [{ type: 'fetch', url: location.host, method: 'GET' }]);
 // eslint-disable-next-line no-undef
 ajaxHooker.hook(handleResponse);
