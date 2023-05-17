@@ -18,7 +18,7 @@
 // @name:id     ChatGPT meningkatkan
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
-// @version     XiaoYing_2023.05.25.23
+// @version     XiaoYing_2023.05.25.24
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -163,7 +163,18 @@ function createButtonOrShow(id = null, Show = null) {
 
 async function getbrowserLanguageStr(text) {
     return new Promise(async (resolve) => {
-        resolve((await globalVariable.get('TranslateMachine').Translate(text, 'auto', browserLanguage, true)).result);
+        let cache = localStorage.getItem(text + '_' + browserLanguage);
+        if (cache) {
+            resolve(cache);
+            return;
+        }
+        cache = (await globalVariable.get('TranslateMachine').Translate(text, 'auto', browserLanguage, true)).result;
+        if (cache) {
+            resolve(cache);
+            localStorage.setItem(text + '_' + browserLanguage, cache);
+            return;
+        }
+        resolve(cache);
     });
 }
 
