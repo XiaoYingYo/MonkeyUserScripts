@@ -18,7 +18,7 @@
 // @name:id     ChatGPT meningkatkan
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
-// @version     XiaoYing_2023.05.25.24
+// @version     XiaoYing_2023.06.11.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -67,8 +67,10 @@ var ignoreHookStr = '&ignoreHookStr';
 async function InitSvg() {
     return new Promise(async (resolve) => {
         let Svg = GM_getValue('clearSvg', []);
-        if (Svg.length !== 0) {
+        let _class = GM_getValue('clearButtonClass', '');
+        if (Svg.length !== 0 && _class !== '') {
             globalVariable.set('clearSvg', Svg);
+            globalVariable.set('clearButtonClass', _class);
             resolve(true);
             return;
         }
@@ -89,6 +91,8 @@ async function InitSvg() {
         if (menuitem.name === 1) {
             return;
         }
+        _class = menuitem.className;
+        globalVariable.set('clearButtonClass', _class);
         let svg = menuitem.querySelector('svg');
         globalVariable.set('clearSvg', []);
         globalVariable.get('clearSvg').push(svg.outerHTML);
@@ -100,6 +104,7 @@ async function InitSvg() {
             menuitem.remove();
             menuButton.click();
             GM_setValue('clearSvg', globalVariable.get('clearSvg'));
+            GM_setValue('clearButtonClass', _class);
             resolve(true);
         }, 100);
     });
@@ -195,6 +200,7 @@ function createOrShowClearButton(Show = null) {
         div.innerHTML = globalVariable.get('clearSvg')[0] + (await getbrowserLanguageStr('Clear Conversations'));
     })();
     div.name = 0;
+    div.className = globalVariable.get('clearButtonClass') || '';
     div.addEventListener('click', function () {
         let title = 'Clear Conversations';
         if (div.name === 0) {
