@@ -1,25 +1,25 @@
 // ==UserScript==
-// @name         drop down select box options better user feeling or optimization
-// @name:en      drop down select box options better user feeling or optimization
-// @name:zh-CN  下拉选择框选项更好的用户体验或优化
-// @name:zh-TW  下拉選單選項更好的使用者體驗或優化
-// @name:ja     ユーザーエクスペリエンスや最適化を向上させるためのドロップダウン選択ボックスオプション
-// @name:ko     다운로드 선택 상자 옵션을 개선하여 사용자 경험 또는 최적화
-// @name:de     Verbesserte Benutzererfahrung oder Optimierung von Dropdown-Auswahlfeldoptionen
-// @name:fr     Amélioration de l expérience utilisateur ou optimisation des options de la liste déroulante
-// @name:es     Mejora de la experiencia del usuario u optimización de las opciones de la caja de selección desplegable
-// @name:pt     Melhoria da experiência do usuário ou otimização das opções da caixa de seleção suspensa
-// @name:ru     Улучшенный пользовательский опыт или оптимизация вариантов выпадающего списка
-// @name:it     Miglioramento dell'esperienza utente o ottimizzazione delle opzioni della casella di selezione a discesa
-// @name:tr     Aşağı açılır seçim kutusu seçeneklerinin kullanıcı deneyimini geliştirilmesi veya optimize edilmesi
-// @name:ar     تحسين تجربة المستخدم أو تحسين خيارات مربع الاختيار القابل للسحب
-// @name:th     การปรับปรุงประสบการณ์ของผู้ใช้หรือการปรับปรุงตัวเลือกกล่องเลือกแบบเลื่อนลง
-// @name:vi     Cải thiện trải nghiệm người dùng hoặc tối ưu hóa tùy chọn hộp thả xuống
-// @name:id     Peningkatan pengalaman pengguna atau optimasi opsi kotak pilihan dropdown
+// @name         下拉选择框改善用户体验
+// @name:en      Drop Down Select Box Improves User Experience
+// @name:zh-CN   下拉选择框改善用户体验
+// @name:zh-TW   下拉選單改善使用者體驗
+// @name:ja      ドロップダウン選択ボックスがユーザーエクスペリエンスを向上させる
+// @name:ko      드롭다운 선택 상자로 사용자 경험 개선
+// @name:de      Verbessertes Benutzererlebnis mit Dropdown-Auswahlfeld
+// @name:fr      Amélioration de l'expérience utilisateur avec une liste déroulante
+// @name:es      Mejora de la experiencia del usuario con cuadro de selección desplegable
+// @name:pt      Melhorando a experiência do usuário com caixa de seleção suspensa
+// @name:ru      Улучшенный пользовательский опыт с выпадающим списком
+// @name:it      Miglioramento dell'esperienza utente con casella di selezione a discesa
+// @name:tr      Aşağı açılır seçim kutusuyla kullanıcı deneyimini geliştirme
+// @name:ar      تحسين تجربة المستخدم باستخدام خيارات مربع الاختيار القابل للسحب
+// @name:th      การปรับปรุงประสบการณ์ของผู้ใช้ด้วยกล่องเลือกแบบเลื่อนลง
+// @name:vi      Cải thiện trải nghiệm người dùng với hộp thả xuống lựa chọn
+// @name:id      Meningkatkan Pengalaman Pengguna dengan Kotak Pilihan Drop Down
 // @namespace   Violentmonkey Scripts
 // @match        *://*/*
 // @grant       none
-// @version     XiaoYing_2023.07.18.4
+// @version     XiaoYing_2023.07.18.6
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
