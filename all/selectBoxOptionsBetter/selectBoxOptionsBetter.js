@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match        *://*/*
 // @grant       none
-// @version     XiaoYing_2023.07.18.3
+// @version     XiaoYing_2023.07.18.4
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -37,23 +37,23 @@
 // @author      github.com @XiaoYingYo
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
-// @description 暴力猴脚本
-// @description:en Violentmonkey Scripts
-// @description:zh-CN 暴力猴脚本
-// @description:zh-TW 暴力猴腳本
-// @description:ja Violentmonkey スクリプト
-// @description:ko Violentmonkey 스크립트
-// @description:de Violentmonkey Skripte
-// @description:fr Violentmonkey Scripts
-// @description:es Violentmonkey Scripts
-// @description:pt Violentmonkey Scripts
-// @description:ru Violentmonkey Сценарии
-// @description:it Violentmonkey Scripts
-// @description:tr Violentmonkey Scripts
-// @description:ar Violentmonkey Scripts
-// @description:th Violentmonkey Scripts
-// @description:vi Violentmonkey Scripts
-// @description:id Violentmonkey Scripts
+// @description 为网页上的下拉选择框添加更好的用户体验 弹出式搜索进行选择
+// @description:en Add a better user experience for dropdown select boxes on webpages Popup search for selection
+// @description:zh-CN 为网页上的下拉选择框添加更好的用户体验 弹出式搜索进行选择
+// @description:zh-TW 為網頁上的下拉選擇框添加更好的用戶體驗 彈出式搜索進行選擇
+// @description:ja ドロップダウンセレクトボックスのより良いユーザーエクスペリエンスを提供するためのスクリプト ポップアップ検索による選択
+// @description:ko 웹 페이지의 드롭다운 선택 상자에 더 나은 사용자 경험 제공 팝업 검색으로 선택
+// @description:de Besseres Benutzererlebnis für Dropdown-Auswahlfelder auf Webseiten Popup-Suche zur Auswahl
+// @description:fr Améliorez l'expérience utilisateur des menus déroulants sur les pages Web Recherche contextuelle pour la sélection
+// @description:es Mejore la experiencia del usuario en los cuadros de selección desplegables en las páginas web Búsqueda emergente para la selección
+// @description:pt Adicione uma melhor experiência do usuário para caixas de seleção suspensas em páginas da web Pesquisa de pop-up para seleção
+// @description:ru Добавить более удобный пользовательский интерфейс для выпадающих списков на веб-страницах Всплывающий поиск для выбора
+// @description:it Aggiungi una migliore esperienza utente per le caselle di selezione a discesa nelle pagine web Ricerca popup per la selezione
+// @description:tr Web sayfalarındaki açılır menüler için daha iyi bir kullanıcı deneyimi ekleyin Seçim için açılır arama
+// @description:ar أضف تجربة مستخدم أفضل لصناديق الاختيار القابلة للسحب على صفحات الويب بحث منبثق للاختيار
+// @description:th เพิ่มประสบการณ์การใช้งานที่ดีขึ้นสำหรับกล่องเลือกที่เหลือบนหน้าเว็บค้นหาโดยกระทำสำหรับการเลือก
+// @description:vi Thêm trải nghiệm người dùng tốt hơn cho hộp thả xuống trên các trang web Tìm kiếm xuất hiện cho việc chọn lựa
+// @description:id Tambahkan pengalaman pengguna yang lebih baik untuk kotak pilihan drop-down di halaman web Pencarian pop-up untuk pemilihan
 // ==/UserScript==
 
 var global_module = window['global_module'];
