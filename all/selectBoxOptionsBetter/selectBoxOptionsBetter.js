@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match        *://*/*
 // @grant       none
-// @version     XiaoYing_2023.07.18.6
+// @version     XiaoYing_2023.07.18.7
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
