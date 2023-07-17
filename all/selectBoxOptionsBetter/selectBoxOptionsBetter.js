@@ -83,9 +83,6 @@ var globalVariable = new Map();
         }
         let listDom = ModalDom.find('div.list').eq(0);
         listDom.append(listDomOrStr);
-        for (let i = 0; i < 100; i++) {
-            listDom.append(listDomOrStr);
-        }
     }
 
     function closeModal() {
