@@ -18,7 +18,7 @@
 // @name:id     ChatGPT meningkatkan
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
-// @version     XiaoYing_2023.06.16.1
+// @version     XiaoYing_2023.11.09.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -156,8 +156,8 @@ function createButtonOrShow(id = null, Show = null) {
         if (Show != null) document.getElementById(id).style.display = Show;
         return;
     }
-    let border = document.querySelectorAll('div[class^="border-"]');
-    border = border[border.length - 1];
+    let border = document.querySelectorAll('div[class="grow"]');
+    border = border[0];
     let div = document.createElement('div');
     div.id = id;
     let className = border.childNodes[0].className;
