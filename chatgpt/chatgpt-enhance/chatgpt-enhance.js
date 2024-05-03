@@ -18,7 +18,8 @@
 // @name:id     ChatGPT meningkatkan
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
-// @version     XiaoYing_2023.11.09.1
+// @match       *://chatgpt.com/*
+// @version     XiaoYing_2024.05.03.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
