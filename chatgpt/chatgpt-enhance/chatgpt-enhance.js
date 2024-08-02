@@ -111,6 +111,7 @@ var ignoreHookStr = '&ignoreHookStr';
                     newBtn.find('svg').remove();
                     newBtn.append(clearButtonSvg);
                     await clearAllConversations();
+                    unsafeWindow.location.href = '/';
                 }
                 newBtn.removeAttr('disabled');
             });
