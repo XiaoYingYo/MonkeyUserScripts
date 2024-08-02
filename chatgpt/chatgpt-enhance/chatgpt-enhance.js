@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.03.1
+// @version     XiaoYing_2024.08.03.2
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -61,7 +61,6 @@
 ajaxHooker.protect();
 
 var globalVariable = new Map();
-var browserLanguage = navigator.language;
 var ignoreHookStr = '&ignoreHookStr';
 
 (async function () {
