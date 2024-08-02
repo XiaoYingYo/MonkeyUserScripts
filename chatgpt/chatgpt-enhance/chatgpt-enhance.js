@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.05.03.1
+// @version     XiaoYing_2024.08.03.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -38,7 +38,6 @@
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @require     https://greasyfork.org/scripts/465643-ajaxhookerlatest/code/ajaxHookerLatest.js
-// @require     https://greasyfork.org/scripts/465512-google-translate-engine/code/GoogleTranslateEngine.js
 // @description 宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复
 // @description:en Wide dialog & Clear chat history & Declare specified language reply to GPT
 // @description:zh-CN  宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复
@@ -65,298 +64,65 @@ var globalVariable = new Map();
 var browserLanguage = navigator.language;
 var ignoreHookStr = '&ignoreHookStr';
 
-async function InitSvg() {
-    return new Promise(async (resolve) => {
-        let Svg = GM_getValue('clearSvg', []);
-        let _class = GM_getValue('clearButtonClass', '');
-        if (Svg.length !== 0 && _class !== '') {
-            globalVariable.set('clearSvg', Svg);
-            globalVariable.set('clearButtonClass', _class);
-            resolve(true);
-            return;
-        }
-        let menuButton = document.querySelector('button[id^="headlessui-menu-button-"]');
-        menuButton.click();
-        let menuitems = [];
-        await new Promise((resolve) => {
-            let Timer = setInterval(() => {
-                menuitems = document.querySelectorAll('a[role="menuitem"]');
-                if (menuitems.length < 4) {
-                    return;
-                }
-                clearInterval(Timer);
+(async function () {
+    function initSession() {
+        return new Promise((resolve) => {
+            $.get('/api/auth/session', { headers: { Accept: 'application/json', 'Content-Type': 'application/json' } }).done((res) => {
+                globalVariable.set('session', res);
+                globalVariable.set('accessToken', res.accessToken);
                 resolve();
-            }, 100);
+            });
         });
-        let menuitem = menuitems[1];
-        if (menuitem.name === 1) {
-            return;
-        }
-        _class = menuitem.className;
-        globalVariable.set('clearButtonClass', _class);
-        let svg = menuitem.querySelector('svg');
-        globalVariable.set('clearSvg', []);
-        globalVariable.get('clearSvg').push(svg.outerHTML);
-        menuitem.click();
-        setTimeout(() => {
-            svg = menuitem.querySelector('svg');
-            globalVariable.get('clearSvg').push(svg.outerHTML);
-            menuitem.name = 1;
-            menuitem.remove();
-            menuButton.click();
-            GM_setValue('clearSvg', globalVariable.get('clearSvg'));
-            GM_setValue('clearButtonClass', _class);
-            resolve(true);
-        }, 100);
-    });
-}
-
-function clearChats() {
-    let url = '/backend-api/conversations';
-    let method = 'PATCH';
-    let Token = globalVariable.get('accessToken');
-    if (Token == null) {
-        alert('Token is null, please refresh the page and try again.Maybe the execution timing of the oil monkey script is set incorrectly.Please set to `document-start`!');
-        return;
     }
-    let headers = {
-        Authorization: 'Bearer ' + Token,
-        'Content-Type': 'application/json'
-    };
-    let body = { is_visible: false };
-    (async () => {
-        let NewChatHistoryElement = globalVariable.get('NewChatHistoryElement');
-        let rHElement = globalVariable.get('rH');
-        if (rHElement && $(NewChatHistoryElement).find(rHElement).length > 0) {
-            return;
-        }
-        let hide = function (tryOne) {
-            $(NewChatHistoryElement).parents('nav').find('ol').eq(0).find('li[class]').hide();
-            if (tryOne) {
-                setTimeout(() => {
-                    hide(false);
-                }, 1000);
-            }
-        };
-        hide(true);
-        conversationsToTrashCan();
-        setTimeout(() => {
-            hide(true);
-        }, 1000);
-        global_module.clickElement(globalVariable.get('NewChatElement')[0]);
-        url = global_module.SetUrlParm(url, 'ignoreHookStr', '0');
-        fetch(url + ignoreHookStr, { method, headers, body: JSON.stringify(body) });
-    })();
-}
 
-function createButtonOrShow(id = null, Show = null) {
-    if (!id) {
-        return;
+    function clearAllConversations() {
+        return new Promise(async (resolve) => {
+            $.ajax({
+                type: 'PATCH',
+                url: '/backend-api/conversations',
+                headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${globalVariable.get('accessToken')}` },
+                data: JSON.stringify({ is_visible: false }),
+                success: (res) => {
+                    resolve(res);
+                }
+            });
+        });
     }
-    if (document.getElementById(id) != null) {
-        if (Show != null) document.getElementById(id).style.display = Show;
-        return;
+
+    function initClearButton() {
+        return new Promise(async (resolve) => {
+            let clearButtonSvg = '<svg t="1722633865116" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1793" width="24" height="24"><path d="M901.3 504.8l-76.3-150c-13.4-26.3-40-42.6-69.5-42.6H639c-1.1 0-2-0.9-2-2V120.6c0-31.1-25.3-56.3-56.3-56.3h-90c-31.1 0-56.3 25.3-56.3 56.3v189.6c0 1.1-0.9 2-2 2H315.8c-29.5 0-56.1 16.3-69.5 42.6l-76.3 150c-9.2 18.1-8.4 39.3 2.2 56.6 10.3 16.8 27.9 27 47.4 27.6-4.8 101-38.3 205.9-90.2 279.5-12.5 17.8-14.1 40.8-4.1 60.1 10 19.3 29.7 31.3 51.5 31.3h601.5c35 0 66-23.6 75.2-57.4 15.5-56.5 28.4-107.9 29.4-164.9C884 685 874 636 852.9 589c19-1.1 36.1-11.2 46.2-27.6 10.6-17.3 11.4-38.5 2.2-56.6z m-681.4 25.4l76.3-150c3.8-7.4 11.3-12 19.6-12h116.4c32 0 58-26 58-58V120.6c0-0.1 0.2-0.3 0.3-0.3h90c0.1 0 0.3 0.2 0.3 0.3v189.6c0 32 26 58 58 58h116.4c8.3 0 15.8 4.6 19.6 12l76.3 150c0.2 0.3 0.5 1-0.1 2s-1.3 1-1.7 1H221.7c-0.4 0-1.1 0-1.7-1-0.6-1-0.3-1.7-0.1-2zM827 736.6c-0.9 50.5-12.9 98.3-27.4 151.1-2.6 9.5-11.3 16.2-21.2 16.2H651.8c11.3-22.3 18.5-44 23.1-61.2 7.1-26.7 10.7-53.5 10.6-78-0.1-17.1-15.5-30.1-32.4-27.4-13.6 2.2-23.6 14-23.6 27.8 0.1 42.7-14.1 98.2-42.7 138.8H406.2c15.2-21.7 26.1-43.8 33.6-61.9 10-24.3 17.4-49.7 21.2-72.5 2.8-17-10.4-32.5-27.6-32.5-13.6 0-25.3 9.8-27.6 23.3-2.8 16.6-8.3 37.7-17.7 60.4-10.1 24.6-27.8 58.1-55.6 83.3H176.9c-0.5 0-1.2 0-1.8-1.1-0.6-1.1-0.2-1.6 0.1-2 29.7-42.1 54.8-94.5 72.5-151.4 16.2-52.1 25.7-106.9 28-160.3h514.6C816 635.6 828 684 827 736.6z" fill="#ffffff" p-id="1794"></path></svg>';
+            let sureClearButtonSvg = '<svg t="1722633889519" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3987" width="24" height="24"><path d="M675.328 117.717333A425.429333 425.429333 0 0 0 512 85.333333C276.352 85.333333 85.333333 276.352 85.333333 512s191.018667 426.666667 426.666667 426.666667 426.666667-191.018667 426.666667-426.666667c0-56.746667-11.093333-112-32.384-163.328a21.333333 21.333333 0 0 0-39.402667 16.341333A382.762667 382.762667 0 0 1 896 512c0 212.074667-171.925333 384-384 384S128 724.074667 128 512 299.925333 128 512 128c51.114667 0 100.8 9.984 146.986667 29.12a21.333333 21.333333 0 0 0 16.341333-39.402667z m-213.333333 468.608l-105.664-105.642666a21.248 21.248 0 0 0-30.122667 0.042666c-8.32 8.32-8.213333 21.973333-0.064 30.101334l120.810667 120.832a21.248 21.248 0 0 0 30.122666-0.085334l211.157334-211.157333a21.290667 21.290667 0 0 0 0-30.186667 21.397333 21.397333 0 0 0-30.250667 0.106667l-196.010667 195.989333z" fill="#ffffff" p-id="3988"></path></svg>';
+            let oneBtn = await global_module.waitForElement('nav[aria-label]', null, null, 100, -1);
+            oneBtn = oneBtn.find('button').eq(0);
+            let newBtn = global_module.cloneAndHide(oneBtn[0]);
+            newBtn = $(newBtn).eq(0).attr('status', 0);
+            oneBtn.show();
+            newBtn.find('svg').remove();
+            newBtn.append(clearButtonSvg);
+            newBtn.off('click').on('click', async () => {
+                let status = newBtn.attr('status');
+                newBtn.attr('disabled', 'disabled');
+                if (status == 0) {
+                    newBtn.attr('status', 1);
+                    newBtn.find('svg').remove();
+                    newBtn.append(sureClearButtonSvg);
+                } else {
+                    newBtn.attr('status', 0);
+                    newBtn.find('svg').remove();
+                    newBtn.append(clearButtonSvg);
+                    await clearAllConversations();
+                }
+                newBtn.removeAttr('disabled');
+            });
+            resolve();
+        });
     }
-    let border = document.querySelectorAll('div[class="grow"]');
-    border = border[0];
-    let div = document.createElement('div');
-    div.id = id;
-    let className = border.childNodes[0].className;
-    div.className = className;
-    border.insertBefore(div, border.childNodes[0]);
-    return div;
-}
-
-async function getbrowserLanguageStr(text) {
-    return new Promise(async (resolve) => {
-        let cache = localStorage.getItem(text + '_' + browserLanguage);
-        if (cache) {
-            resolve(cache);
-            return;
-        }
-        cache = (await globalVariable.get('TranslateMachine').Translate(text, 'auto', browserLanguage, true)).result;
-        if (cache) {
-            resolve(cache);
-            localStorage.setItem(text + '_' + browserLanguage, cache);
-            return;
-        }
-        resolve(cache);
-    });
-}
-
-function conversationsToTrashCan() {
-    let conversations = globalVariable.get('cacheConversations');
-    conversations.forEach((value, key) => {
-        globalVariable.get('trashCanConversations').set(key, '');
-    });
-    globalVariable.set('cacheConversations', new Map());
-}
-
-function createOrShowClearButton(Show = null) {
-    let div = createButtonOrShow('_clearButton_', Show);
-    if (!div) {
-        return;
-    }
-    (async () => {
-        div.innerHTML = globalVariable.get('clearSvg')[0] + (await getbrowserLanguageStr('Clear Conversations'));
-    })();
-    div.name = 0;
-    div.className = globalVariable.get('clearButtonClass') || '';
-    div.addEventListener('click', function () {
-        let title = 'Clear Conversations';
-        if (div.name === 0) {
-            title = 'Confirm ' + title;
-            div.name = 1;
-        } else {
-            div.name = 0;
-            clearChats();
-        }
-        (async () => {
-            div.innerHTML = globalVariable.get('clearSvg')[div.name] + (await getbrowserLanguageStr(title));
-        })();
-    });
-}
-
-function addTextBase() {
-    let style = $('body').find('style[id="text-base"]').eq(0);
-    if (style.length != 0) {
-        return;
-    }
-    style = document.createElement('style');
-    style.id = 'text-base';
-    let css = `.text-base {
-        max-width: 92%;
-    }`;
-    style.innerHTML = css;
-    document.body.appendChild(style);
-}
-
-async function initUseElement() {
-    let ChatHistoryElement = $('div[class*="items-center"][class*="text"]').eq(0);
-    globalVariable.set('NewChatHistoryElement', ChatHistoryElement);
-    let newChat = ChatHistoryElement.parents('nav').eq(0).find('a').eq(0);
-    if (newChat.length === 0) {
-        setTimeout(() => {
-            initUseElement();
-        }, 1000);
-        return;
-    }
-    newChat = newChat.eq(0);
-    globalVariable.set('NewChatElement', newChat);
-    await InitSvg();
-    createOrShowClearButton();
-}
-
-function getContentMainBodyHistoricalDialogue(req, res, Text, period) {
-    if (period !== 'done') {
-        return;
-    }
-    setTimeout(() => {
-        initUseElement();
-    }, 1000);
-}
-
-globalVariable.set('cacheConversations', new Map());
-globalVariable.set('trashCanConversations', new Map());
+    await initSession();
+    initClearButton();
+})();
 
 var HookFun = new Map();
-HookFun.set('/api/auth/session', function (req, res, Text, period) {
-    if (period === 'preload') {
-        return;
-    }
-    new Promise(async (resolve) => {
-        if (period !== 'done') {
-            return;
-        }
-        addTextBase();
-        let json = JSON.parse(Text);
-        let accessToken = json.accessToken;
-        localStorage.setItem('ChatGPT.accessToken', accessToken);
-        globalVariable.set('accessToken', accessToken);
-        resolve(null);
-    });
-});
-HookFun.set('/backend-api/conversation', function (req, res, Text, period) {
-    if (period === 'preload') {
-        let additional = 'Please reply me with ';
-        let additionals = additional + browserLanguage;
-        let body = JSON.parse(req.data);
-        let messages = body.messages;
-        if (messages instanceof Array) {
-            for (let i = 0; i < messages.length; i++) {
-                let parts = messages[i].content.parts;
-                if (parts instanceof Array) {
-                    for (let j = 0; j < parts.length; j++) {
-                        if (parts[j].indexOf(additional) != -1) {
-                            continue;
-                        }
-                        parts[j] = parts[j] + '\n' + additionals;
-                    }
-                }
-            }
-        }
-        req.data = JSON.stringify(body);
-        setTimeout(() => {
-            addTextBase();
-        }, 100);
-        return;
-    }
-    return new Promise(async (resolve) => {
-        if (period !== 'done') {
-            return;
-        }
-        resolve(null);
-    });
-});
-HookFun.set('/backend-api/conversations', function (req, res, Text, period) {
-    if (period === 'preload') {
-        return;
-    }
-    return new Promise(async (resolve) => {
-        if (period !== 'done') {
-            return;
-        }
-        addTextBase();
-        let url = req.url;
-        if (url.indexOf('?') == -1) {
-            return;
-        }
-        let json = JSON.parse(Text);
-        if (json.items.length !== 0) {
-            let i = 0;
-            while (i != json.items.length) {
-                let id = json.items[i].id;
-                if (globalVariable.get('trashCanConversations').has(id)) {
-                    json.items.splice(i, 1);
-                    json.total--;
-                    continue;
-                }
-                if (globalVariable.get('cacheConversations').has(id)) {
-                    i++;
-                    continue;
-                }
-                HookFun.set('/backend-api/conversation/' + id, getContentMainBodyHistoricalDialogue);
-                globalVariable.get('cacheConversations').set(id, json.items[i]);
-                i++;
-            }
-        }
-        if (json.items.length === 0) {
-            let title = '{_reserveHistory_}';
-            json.total = 0;
-            let time = new Date().toISOString();
-            json.items = [{ id: '', title, create_time: time, update_time: time }];
-            (async () => {
-                let rH = await global_module.waitForElement('div:contains("' + title + '")[class*="text-ellipsis"]', null, null, 10, -1);
-                rH = rH.eq(0);
-                rH.parent().hide();
-                globalVariable.set('rH', rH);
-            })();
-        }
-        initUseElement();
-        Text = JSON.stringify(json);
-        resolve(Text);
-    });
-});
 
 function handleResponse(request) {
     if (!request) {
@@ -404,5 +170,3 @@ function handleResponse(request) {
 
 // eslint-disable-next-line no-undef
 ajaxHooker.hook(handleResponse);
-// eslint-disable-next-line no-undef
-globalVariable.set('TranslateMachine', new TranslateMachine());
