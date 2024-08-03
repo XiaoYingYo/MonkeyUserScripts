@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.04.4
+// @version     XiaoYing_2024.08.04.6
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -79,15 +79,28 @@ var clearButtonSvg = '<svg t="1722633865116" class="icon" viewBox="0 0 1024 1024
 
     function clearAllConversations() {
         return new Promise(async (resolve) => {
-            $.ajax({
-                type: 'PATCH',
-                url: '/backend-api/conversations',
-                headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${globalVariable.get('accessToken')}` },
-                data: JSON.stringify({ is_visible: false }),
-                success: (res) => {
-                    resolve(res);
+            let data = await getAllItems();
+            let Tasks = [];
+            for (let i = 0; i < data.length; i++) {
+                let item = data[i];
+                let id = item.id;
+                let title = item.title;
+                if (title.charAt(0) == '#') {
+                    continue;
                 }
-            });
+                Tasks.push(deleteItem(id));
+            }
+            await Promise.all(Tasks);
+            resolve();
+            // $.ajax({
+            //     type: 'PATCH',
+            //     url: '/backend-api/conversations',
+            //     headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${globalVariable.get('accessToken')}` },
+            //     data: JSON.stringify({ is_visible: false }),
+            //     success: (res) => {
+            //         resolve(res);
+            //     }
+            // });
         });
     }
 
@@ -164,37 +177,87 @@ function purify() {
     });
 }
 
+function getAllItems() {
+    return new Promise(async (resolve) => {
+        let limit = 30;
+        let currentTotal = 0;
+        let retItems = [];
+        let getItems = function (offset) {
+            return new Promise(async (resolve) => {
+                console.log('getAllItems');
+                $.ajax({
+                    type: 'GET',
+                    url: '/backend-api/conversations?offset=' + offset + '&limit=' + limit + '&order=updated',
+                    headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${globalVariable.get('accessToken')}` },
+                    success: (data) => {
+                        resolve(data);
+                    },
+                    error: async () => {
+                        resolve(await getAllItems(offset));
+                    }
+                });
+            });
+        };
+        let data = await getItems(0);
+        let total = data.total;
+        let items = data.items;
+        currentTotal = currentTotal + items.length;
+        retItems = retItems.concat(items);
+        while (currentTotal < total) {
+            data = await getItems(currentTotal);
+            total = data.total;
+            items = data.items;
+            currentTotal = currentTotal + items.length;
+            retItems = retItems.concat(items);
+        }
+        resolve(retItems);
+    });
+}
+
+function deleteItem(id) {
+    return new Promise(async (resolve) => {
+        globalVariable.get('itemDom')[id].hide();
+        $.ajax({
+            type: 'PATCH',
+            url: '/backend-api/conversation/' + id,
+            headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${globalVariable.get('accessToken')}` },
+            data: JSON.stringify({ is_visible: false }),
+            success: () => {
+                globalVariable.get('itemDom')[id].remove();
+                resolve(true);
+            },
+            error: async () => {
+                resolve(await deleteItem(id));
+            }
+        });
+    });
+}
+
 function initItemDeleteBtn() {
     return new Promise(async (resolve) => {
         let nav = globalVariable.get('Nav');
         let itemDiv = await global_module.waitForElement('div[class*="text-token-text-primary text-sm"]', null, null, 100, -1, nav);
         let liList = await global_module.waitForElement('li', null, null, 100, -1, itemDiv);
+        globalVariable.set('itemDom', {});
         for (let i = 0; i < liList.length; i++) {
             let spanBtn = $(liList[i]).find('span[class][data-state="closed"]');
+            let that = spanBtn.eq(0);
+            let li = that.parents('li');
+            let a = li.find('a');
+            let href = a.attr('href');
+            let id = href.replace('/c/', '');
+            globalVariable.get('itemDom')[id] = li;
             if (spanBtn.length != 1) {
                 continue;
             }
-            let that = spanBtn.eq(0);
-            let newBtn = global_module.cloneAndHide(that[0], 1);
+            let newBtn = global_module.cloneAndHide(that[0], 2);
             newBtn = $(newBtn);
             newBtn.find('svg').remove();
             newBtn.append(clearButtonSvg);
             that.show();
             newBtn.css('cursor', 'pointer');
             newBtn.off('click').on('click', async () => {
-                let li = that.parents('li');
-                let a = li.find('a');
-                let href = a.attr('href');
-                let id = href.replace('/c/', '');
-                $.ajax({
-                    type: 'PATCH',
-                    url: '/backend-api/conversation/' + id,
-                    headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${globalVariable.get('accessToken')}` },
-                    data: JSON.stringify({ is_visible: false }),
-                    success: () => {
-                        location.href = '/';
-                    }
-                });
+                await deleteItem(id);
             });
         }
         resolve();
