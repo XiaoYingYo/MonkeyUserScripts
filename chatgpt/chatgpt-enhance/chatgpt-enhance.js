@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.03.3
+// @version     XiaoYing_2024.08.04.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -38,6 +38,7 @@
 // @require     https://greasyfork.org/scripts/464929-module-jquery-xiaoying/code/module_jquery_XiaoYing.js
 // @require     https://greasyfork.org/scripts/464780-global-module/code/global_module.js
 // @require     https://greasyfork.org/scripts/465643-ajaxhookerlatest/code/ajaxHookerLatest.js
+// @require     https://greasyfork.org/scripts/440334-jquery-like-spa-operation-library/code/jQuery-like%20SPA%20operation%20library.js
 // @description 宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复
 // @description:en Wide dialog & Clear chat history & Declare specified language reply to GPT
 // @description:zh-CN  宽度对话框 & 一键清空聊天记录 & 向GPT声明指定语言回复
@@ -121,47 +122,47 @@ var ignoreHookStr = '&ignoreHookStr';
         });
     }
 
-    function purify() {
-        return new Promise(async (resolve) => {
-            let Tasks = [];
-            let nav = globalVariable.get('Nav');
-            Tasks.push(
-                (() => {
-                    return new Promise(async (resolve) => {
-                        let upgradeDom = await global_module.waitForElement('a[one-link-mark][class*="token"]', null, null, 100, -1, nav);
-                        upgradeDom = upgradeDom.eq(upgradeDom.length - 1);
-                        upgradeDom.parent().remove();
-                        resolve();
-                    });
-                })()
-            );
-            Tasks.push(
-                (() => {
-                    return new Promise(async (resolve) => {
-                        let presentation = await global_module.waitForElement('div[role="presentation"]', null, null, 100, -1);
-                        presentation = presentation.eq(presentation.length - 1);
-                        let presentationTip = await global_module.waitForElement('span:contains("ChatGPT ")', null, null, 100, -1, presentation);
-                        presentationTip.remove();
-                        resolve();
-                    });
-                })()
-            );
-            Tasks.push(
-                (() => {
-                    return new Promise(async (resolve) => {
-                        $(await global_module.waitForElement('button[data-state="closed"][id^="radix"]:contains("?")', null, null, 100, -1)).remove();
-                        resolve();
-                    });
-                })()
-            );
-            await Promise.all(Tasks);
-            resolve();
-        });
-    }
     await initSession();
     initClearButton();
-    await purify();
 })();
+
+function purify() {
+    return new Promise(async (resolve) => {
+        let Tasks = [];
+        let nav = globalVariable.get('Nav');
+        Tasks.push(
+            (() => {
+                return new Promise(async (resolve) => {
+                    let upgradeDom = await global_module.waitForElement('a[one-link-mark][class*="token"]', null, null, 100, -1, nav);
+                    upgradeDom = upgradeDom.eq(upgradeDom.length - 1);
+                    upgradeDom.parent().remove();
+                    resolve();
+                });
+            })()
+        );
+        Tasks.push(
+            (() => {
+                return new Promise(async (resolve) => {
+                    let presentation = await global_module.waitForElement('div[role="presentation"]', null, null, 100, -1);
+                    presentation = presentation.eq(presentation.length - 1);
+                    let presentationTip = await global_module.waitForElement('span:contains("ChatGPT ")', null, null, 100, -1, presentation);
+                    presentationTip.remove();
+                    resolve();
+                });
+            })()
+        );
+        Tasks.push(
+            (() => {
+                return new Promise(async (resolve) => {
+                    $(await global_module.waitForElement('button[data-state="closed"][id^="radix"]:contains("?")', null, null, 100, -1)).remove();
+                    resolve();
+                });
+            })()
+        );
+        await Promise.all(Tasks);
+        resolve();
+    });
+}
 
 var HookFun = new Map();
 HookFun.set('/backend-api/conversation', function (req, res, Text, period) {
@@ -240,3 +241,9 @@ function handleResponse(request) {
 
 // eslint-disable-next-line no-undef
 ajaxHooker.hook(handleResponse);
+
+$.onurlchange(function () {
+    setTimeout(async () => {
+        await purify();
+    }, 1000);
+});
