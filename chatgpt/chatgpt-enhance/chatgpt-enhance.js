@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.04.7
+// @version     XiaoYing_2024.08.04.11
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -266,23 +266,17 @@ function initItemDeleteBtn() {
 
 function widescreenDialogue() {
     return new Promise(async (resolve) => {
-        if (globalVariable.get('initWidescreenDialogue') == 1 || $('body').find('style[id="widescreenDialogueCss]').length != 0) {
+        if ($('body').find('style[id="widescreenDialogueCss]').length != 0) {
             resolve();
             return;
         }
-        globalVariable.set('initWidescreenDialogue', 1);
-        try {
-            let sel = 'div[class^="items-center"]';
-            let Btn = await global_module.waitForElement(sel, null, null, 1000, -1);
-            Btn = Btn.eq(0);
-            let BtnParent = Btn;
-            for (let i = 0; i < 4; i++) {
-                BtnParent = $(BtnParent).parent().eq(0);
-            }
-            let cssClassName = BtnParent.attr('class').split(' ')[0];
-            let styleHtml = '.' + cssClassName + '{width:100%;max-width:100%;}';
-            $('body').append('<style id="widescreenDialogueCss">' + styleHtml + '</style>');
-        } catch (e) {}
+        let sel = 'textarea[id="prompt-textarea"]';
+        let Btn = await global_module.waitForElement(sel, null, null, 1000, -1);
+        Btn = Btn.eq(0);
+        let BtnParent = Btn.parents('form').eq(0).parent().eq(0);
+        let cssClassName = BtnParent.attr('class').split(' ')[0];
+        let styleHtml = '.' + cssClassName + '{width:100%;max-width:100%;}';
+        $('body').append('<style id="widescreenDialogueCss">' + styleHtml + '</style>');
         resolve();
     });
 }
