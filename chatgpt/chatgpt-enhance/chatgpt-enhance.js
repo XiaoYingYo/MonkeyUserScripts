@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.04.12
+// @version     XiaoYing_2024.08.04.13
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -183,7 +183,6 @@ function getAllItems() {
         let retItems = [];
         let getItems = function (offset) {
             return new Promise(async (resolve) => {
-                console.log('getAllItems');
                 $.ajax({
                     type: 'GET',
                     url: '/backend-api/conversations?offset=' + offset + '&limit=' + limit + '&order=updated',
