@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.04.11
+// @version     XiaoYing_2024.08.04.12
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -134,7 +134,6 @@ var clearButtonSvg = '<svg t="1722633865116" class="icon" viewBox="0 0 1024 1024
             resolve();
         });
     }
-
     await initSession();
     initClearButton();
 })();
@@ -215,15 +214,30 @@ function getAllItems() {
 }
 
 function deleteItem(id) {
+    let item = globalVariable.get('itemDom')[id];
+    if (item && !globalVariable.get('deleteItem_' + id + '_loading_setInterval')) {
+        let textDom = item.find('[dir="auto"]').eq(0);
+        textDom.text('.');
+        globalVariable.set(
+            'deleteItem_' + id + '_loading_setInterval',
+            setInterval(() => {
+                textDom.text(textDom.text() + '.');
+                if (textDom.text().length > 6) {
+                    textDom.text('.');
+                }
+            }, 500)
+        );
+    }
     return new Promise(async (resolve) => {
-        globalVariable.get('itemDom')[id].hide();
         $.ajax({
             type: 'PATCH',
             url: '/backend-api/conversation/' + id,
             headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${globalVariable.get('accessToken')}` },
             data: JSON.stringify({ is_visible: false }),
             success: () => {
-                globalVariable.get('itemDom')[id].remove();
+                if (item) {
+                    item.remove();
+                }
                 resolve(true);
             },
             error: async () => {
