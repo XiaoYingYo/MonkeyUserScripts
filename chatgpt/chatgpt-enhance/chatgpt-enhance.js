@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.04.3
+// @version     XiaoYing_2024.08.04.4
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
