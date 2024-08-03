@@ -133,9 +133,9 @@ function purify() {
         Tasks.push(
             (() => {
                 return new Promise(async (resolve) => {
-                    let upgradeDom = await global_module.waitForElement('a[one-link-mark][class*="token"]', null, null, 100, -1, nav);
+                    let upgradeDom = await global_module.waitForElement('span[class*="border-token-border-light"]', null, null, 100, -1, nav);
                     upgradeDom = upgradeDom.eq(upgradeDom.length - 1);
-                    upgradeDom.parent().remove();
+                    upgradeDom.parents('a').eq(0).remove();
                     resolve();
                 });
             })()
