@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.04.13
+// @version     XiaoYing_2024.08.08.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -147,7 +147,7 @@ function purify() {
                 return new Promise(async (resolve) => {
                     let upgradeDom = await global_module.waitForElement('span[class*="border-token-border-light"]', null, null, 100, -1, nav);
                     upgradeDom = upgradeDom.eq(upgradeDom.length - 1);
-                    upgradeDom.parents('a').eq(0).remove();
+                    upgradeDom.parents('a').eq(0).hide();
                     resolve();
                 });
             })()
@@ -158,7 +158,7 @@ function purify() {
                     let presentation = await global_module.waitForElement('div[role="presentation"]', null, null, 100, -1);
                     presentation = presentation.eq(presentation.length - 1);
                     let presentationTip = await global_module.waitForElement('span:contains("ChatGPT ")', null, null, 100, -1, presentation);
-                    presentationTip.remove();
+                    presentationTip.hide();
                     resolve();
                 });
             })()
@@ -166,7 +166,7 @@ function purify() {
         Tasks.push(
             (() => {
                 return new Promise(async (resolve) => {
-                    $(await global_module.waitForElement('button[data-state="closed"][id^="radix"]:contains("?")', null, null, 100, -1)).remove();
+                    $(await global_module.waitForElement('button[data-state="closed"][id^="radix"]:contains("?")', null, null, 100, -1)).hide();
                     resolve();
                 });
             })()
