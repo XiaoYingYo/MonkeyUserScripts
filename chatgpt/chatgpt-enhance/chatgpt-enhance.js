@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.08.5
+// @version     XiaoYing_2024.08.08.6
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -366,6 +366,9 @@ HookFun.set('/backend-api/conversation', function (req, res, Text, period) {
                 let parts = messages[i].content.parts;
                 if (parts instanceof Array) {
                     for (let j = 0; j < parts.length; j++) {
+                        if (typeof parts[j] == 'object') {
+                            continue;
+                        }
                         if (parts[j].indexOf(additional) != -1) {
                             continue;
                         }
