@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.08.2
+// @version     XiaoYing_2024.08.08.3
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -300,6 +300,14 @@ function initItemDeleteBtn() {
         let itemDiv = await global_module.waitForElement('div[class*="text-token-text-primary text-sm"]', null, null, 100, -1, nav);
         let liList = await global_module.waitForElement('li', null, null, 100, -1, itemDiv);
         globalVariable.set('itemDom', {});
+        let seeBtn = $(nav).eq(0).find('button:contains("See ")');
+        if (seeBtn.length != 0) {
+            let seeBtnText = seeBtn.text().replace('See ', '');
+            if (seeBtnText != 'less') {
+                global_module.clickElement(seeBtn[0]);
+            }
+            seeBtn.hide();
+        }
         for (let i = 0; i < liList.length; i++) {
             let spanBtn = $(liList[i]).find('span[class][data-state="closed"]');
             let that = spanBtn.eq(0);
