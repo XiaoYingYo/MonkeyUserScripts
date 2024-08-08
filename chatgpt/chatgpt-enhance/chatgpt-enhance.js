@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.08.4
+// @version     XiaoYing_2024.08.08.5
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -310,7 +310,7 @@ function initItemDeleteBtn() {
             setTimeout(() => {
                 seeBtn = $(nav).eq(0).find(SeeSel);
                 seeBtn.hide();
-            }, 1000);
+            }, 200);
         }
         for (let i = 0; i < liList.length; i++) {
             let spanBtn = $(liList[i]).find('span[class][data-state="closed"]');
