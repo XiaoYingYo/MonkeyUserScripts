@@ -18,7 +18,7 @@
 // @name:id     Tingkatkan Pikpak
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
-// @version     XiaoYing_2023.06.16.3
+// @version     XiaoYing_2024.08.23.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -60,7 +60,7 @@ var GlobalVariable = {};
 
 async function DealWithoverlay(i, callback) {
     return new Promise(async (resolve) => {
-        let overlay = $('div.el-overlay:not([style*="display"])').eq(0);
+        let overlay = await global_module.waitForElement('div.el-overlay:not([style*="display"])', null, null, 100, 3 * 1000);
         if (overlay.length === 0) {
             resolve();
             return;
@@ -381,12 +381,17 @@ function analyzeLoginInfo(item, text) {
         return;
     }
     let password = '';
+    text = text.replace(/:/g, '-');
+    text = text.replace(/：/g, ':');
     text = text.replace(emailReg, '');
-    text = text.replace(/\n/g, '');
+    // text = text.replace(/\n/g, '');
     email = email[0];
     if (text.indexOf(':') != -1) {
-        let index = text.lastIndexOf(':');
+        let index = text.indexOf(':');
         password = text.substring(index + 1);
+        if (password.indexOf('\n') != -1) {
+            password = password.substring(0, password.indexOf('\n'));
+        }
     } else if (!/\s/.test(text)) {
         password = text.replace(/[^a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\|\\\:\;\"\'\,\.\/\<\>\?]/g, '');
     } else {
@@ -394,15 +399,14 @@ function analyzeLoginInfo(item, text) {
         password = text.substring(index + 1);
     }
     if (email != '' && password != '') {
-        let inputList = item.find('input[class][placeholder][type]');
+        let inputList = item.find('input[class][placeholder]');
         email = email.replace(/\s/g, '');
         password = password.replace(/\s/g, '');
         global_module.AnalogInput.AnalogInput(inputList.eq(0)[0], email);
         global_module.AnalogInput.AnalogInput(inputList.eq(1)[0], password);
-        let loginBtn = item.find('div[class*="login-button"]').eq(0);
         MonitorUrl(1);
         setTimeout(() => {
-            loginBtn.click();
+            $('[class="pp-button"]').eq(0).click();
         }, 200);
     }
 }
@@ -420,8 +424,8 @@ function loginPaneleModified() {
     let QuickInputHeight = 188;
     let div = $(`<div id="QuickInput"><textarea placeholder="` + GlobalVariable.Interfacelanguage['login']['002'][GlobalVariable.Navigatorlanguage] + `" style="width: 100%; height:` + QuickInputHeight + `px;"></textarea></div>`);
     form.append(div);
-    let formHeight = form.height();
-    form.css('height', formHeight + QuickInputHeight + 'px');
+    // let formHeight = form.height();
+    // form.css('height', formHeight + QuickInputHeight + 'px');
     form.find('div[class="agreement"]').eq(0).css('display', 'none');
     let textarea = div.find('textarea').eq(0);
     textarea.on(
@@ -557,7 +561,16 @@ async function ListenControlButtonClick() {
     });
 }
 
+function hideIntrojs() {
+    return new Promise(async (resolve) => {
+        await global_module.waitForElement('div[class^="introjs-"]', null, null, 100, 10 * 1000);
+        $('div[class^="introjs-"]').remove();
+        resolve();
+    });
+}
+
 async function main() {
+    hideIntrojs();
     MonitorUrl(0);
     MonitorLogout();
     let nav = await global_module.waitForElement('ul[class="nav"]', null, null, 100, 60 * 1000);
@@ -643,8 +656,8 @@ unsafeWindow['__hookRequest__'].FetchCallback.add('/vip/v1/vip/info', (_object, 
                 GlobalVariable.vipDaysDom.text(title);
                 return;
             }
-            let cloneDom = await global_module.waitForElement('div[class="header-bar-right"]', null, null, 100, -1);
-            cloneDom = cloneDom.find('a').eq(0);
+            let cloneDom = await global_module.waitForElement('div[class*="header-bar-right"]', null, null, 100, -1);
+            cloneDom = cloneDom.eq(0).find('a').eq(0);
             let newDom = $(global_module.cloneAndHide(cloneDom[0], 1));
             newDom.attr('id', '_vipdays_');
             GlobalVariable.vipDaysDom = newDom;
