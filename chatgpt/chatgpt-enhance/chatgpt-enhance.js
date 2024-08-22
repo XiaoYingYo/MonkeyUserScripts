@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.08.6
+// @version     XiaoYing_2024.08.22.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -283,7 +283,7 @@ function deleteItem(id) {
             data: JSON.stringify({ is_visible: false }),
             success: () => {
                 if (item) {
-                    item.remove();
+                    item.hide();
                 }
                 resolve(true);
             },
