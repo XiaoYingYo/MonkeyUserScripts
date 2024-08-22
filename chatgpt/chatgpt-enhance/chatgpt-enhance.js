@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.22.2
+// @version     XiaoYing_2024.08.23.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -263,11 +263,19 @@ function getAllItems() {
 function deleteItem(id) {
     let item = globalVariable.get('itemDom')[id];
     if (item && !globalVariable.get('deleteItem_' + id + '_loading_setInterval')) {
+        // 先记录原来的文字
         let textDom = item.find('[dir="auto"]').eq(0);
+        let oldHtml = textDom.html();
         textDom.text('.');
         globalVariable.set(
             'deleteItem_' + id + '_loading_setInterval',
             setInterval(() => {
+                if (globalVariable.get('deleteItem_' + id + '_loading_setInterval_done')) {
+                    globalVariable.remove('deleteItem_' + id + '_loading_setInterval_done');
+                    textDom.html(oldHtml);
+                    clearInterval(globalVariable.get('deleteItem_' + id + '_loading_setInterval'));
+                    return;
+                }
                 textDom.text(textDom.text() + '.');
                 if (textDom.text().length > 6) {
                     textDom.text('.');
@@ -285,7 +293,7 @@ function deleteItem(id) {
                 if (item) {
                     item.hide();
                 }
-                clearInterval(globalVariable.get('deleteItem_' + id + '_loading_setInterval'));
+                globalVariable.set('deleteItem_' + id + '_loading_setInterval_done', true);
                 resolve(true);
             },
             error: async () => {
