@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.08.23.2
+// @version     XiaoYing_2024.09.03.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -107,8 +107,7 @@ var clearButtonSvg = '<svg t="1722633865116" class="icon" viewBox="0 0 1024 1024
     function initClearButton() {
         return new Promise(async (resolve) => {
             let sureClearButtonSvg = '<svg t="1722633889519" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3987" width="24" height="24"><path d="M675.328 117.717333A425.429333 425.429333 0 0 0 512 85.333333C276.352 85.333333 85.333333 276.352 85.333333 512s191.018667 426.666667 426.666667 426.666667 426.666667-191.018667 426.666667-426.666667c0-56.746667-11.093333-112-32.384-163.328a21.333333 21.333333 0 0 0-39.402667 16.341333A382.762667 382.762667 0 0 1 896 512c0 212.074667-171.925333 384-384 384S128 724.074667 128 512 299.925333 128 512 128c51.114667 0 100.8 9.984 146.986667 29.12a21.333333 21.333333 0 0 0 16.341333-39.402667z m-213.333333 468.608l-105.664-105.642666a21.248 21.248 0 0 0-30.122667 0.042666c-8.32 8.32-8.213333 21.973333-0.064 30.101334l120.810667 120.832a21.248 21.248 0 0 0 30.122666-0.085334l211.157334-211.157333a21.290667 21.290667 0 0 0 0-30.186667 21.397333 21.397333 0 0 0-30.250667 0.106667l-196.010667 195.989333z" fill="#ffffff" p-id="3988"></path></svg>';
-            let oneBtn = await global_module.waitForElement('nav[aria-label]', null, null, 100, -1);
-            globalVariable.set('Nav', $(oneBtn));
+            let oneBtn = await getNav();
             oneBtn = oneBtn.find('button').eq(0);
             let newBtn = global_module.cloneAndHide(oneBtn[0]);
             newBtn = $(newBtn).eq(0).attr('status', 0);
@@ -189,7 +188,7 @@ var clearButtonSvg = '<svg t="1722633865116" class="icon" viewBox="0 0 1024 1024
 function purify() {
     return new Promise(async (resolve) => {
         let Tasks = [];
-        let nav = globalVariable.get('Nav');
+        let nav = await getNav();
         Tasks.push(
             (() => {
                 return new Promise(async (resolve) => {
@@ -302,9 +301,16 @@ function deleteItem(id) {
     });
 }
 
+function getNav() {
+    return new Promise(async (resolve) => {
+        let nav = await global_module.waitForElement('nav[aria-label]', null, null, 100, -1);
+        resolve(nav);
+    });
+}
+
 function initItemDeleteBtn() {
     return new Promise(async (resolve) => {
-        let nav = globalVariable.get('Nav');
+        let nav = await getNav();
         let itemDiv = await global_module.waitForElement('div[class*="text-token-text-primary text-sm"]', null, null, 100, -1, nav);
         let liList = await global_module.waitForElement('li', null, null, 100, -1, itemDiv);
         globalVariable.set('itemDom', {});
@@ -407,6 +413,24 @@ HookFun.set('/backend-api/conversations', function (req, res, Text, period) {
         }
         setTimeout(async () => {
             await initItemDeleteBtn();
+            await widescreenDialogue();
+            await purify();
+            let hookPath = '/backend-api/memories';
+            if (HookFun.get(hookPath) != null) {
+                return;
+            }
+            HookFun.set(hookPath, function (req, res, Text, period) {
+                return new Promise(async (resolve) => {
+                    if (period !== 'done') {
+                        resolve(null);
+                        return;
+                    }
+                    setTimeout(async () => {
+                        await initItemDeleteBtn();
+                    }, 1000);
+                    resolve(null);
+                });
+            });
         }, 1000);
         resolve(null);
     });
