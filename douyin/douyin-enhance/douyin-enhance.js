@@ -4,7 +4,7 @@
 // @name:zh-TW   抖音增強
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
-// @version     XiaoYing_2024.08.04.1
+// @version     XiaoYing_2024.09.09.2
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -154,6 +154,5 @@ function handleResponse(request) {
         return;
     }
 }
-
 // eslint-disable-next-line no-undef
 ajaxHooker.hook(handleResponse);
