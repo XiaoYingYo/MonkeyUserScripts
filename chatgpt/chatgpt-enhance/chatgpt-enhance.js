@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.09.03.1
+// @version     XiaoYing_2024.09.10.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -357,7 +357,7 @@ function widescreenDialogue() {
             resolve();
             return;
         }
-        let sel = 'textarea[id="prompt-textarea"]';
+        let sel = 'div[id="prompt-textarea"]';
         let Btn = await global_module.waitForElement(sel, null, null, 1000, -1);
         Btn = Btn.eq(0);
         let BtnParent = Btn.parents('form').eq(0).parent().eq(0);
