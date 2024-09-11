@@ -19,7 +19,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://chat.openai.com/*
 // @match       *://chatgpt.com/*
-// @version     XiaoYing_2024.09.11.1
+// @version     XiaoYing_2024.09.12.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -204,8 +204,8 @@ function purify() {
                 return new Promise(async (resolve) => {
                     let presentation = await global_module.waitForElement('div[role="presentation"]', null, null, 100, -1);
                     presentation = presentation.eq(presentation.length - 1);
-                    let presentationTip = await global_module.waitForElement('span:contains("ChatGPT ")', null, null, 100, -1, presentation);
-                    presentationTip.hide();
+                    let presentationTip = await global_module.waitForElement('div:contains("ChatGPT "):not([class])', null, null, 100, -1, presentation);
+                    presentationTip.parent().hide();
                     resolve();
                 });
             })()
