@@ -18,7 +18,7 @@
 // @name:id     Tingkatkan Pikpak
 // @namespace   Violentmonkey Scripts
 // @match       *://mypikpak.com/drive/*
-// @version     XiaoYing_2024.08.23.1
+// @version     XiaoYing_2024.09.12.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -627,12 +627,12 @@ unsafeWindow['__hookRequest__'].FetchCallback.add('/vip/v1/vip/info', (_object, 
             let json = JSON.parse(_object.text);
             let data = json.data;
             let expire = data.expire;
-            let now = new Date();
-            let expireDate = new Date(expire);
-            let day = (expireDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
-            day = Math.ceil(day);
-            if (day < 0) {
-                return;
+            let day = 0;
+            if (expire && expire != '') {
+                let now = new Date();
+                let expireDate = new Date(expire);
+                day = (expireDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000);
+                day = Math.ceil(day);
             }
             if (unsafeWindow['Pikpak_Archive'] != null) {
                 try {
