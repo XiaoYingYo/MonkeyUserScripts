@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.pornhub.com/*
 // @grant       none
-// @version     XiaoYing_2024.12.13.1
+// @version     XiaoYing_2024.12.13.3
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -33,14 +33,11 @@ funMap.set('/view_video.php', async () => {
         let abAlertClose = await global_module.waitForElement('a[id="abAlertClose"]', null, null, 100, -1);
         global_module.clickElement(abAlertClose.eq(0)[0]);
         let playerDiv = await global_module.waitForElement('div[id^="playerDiv"]', null, null, 100, -1);
-        $('html, body').animate({
-            scrollTop: playerDiv.offset().top
-        });
         let loadMoreRelatedVideosCenter = await global_module.waitForElement('div[id="loadMoreRelatedVideosCenter"]', null, null, 100, -1);
-        let loadMoreRelatedVideosCenterText = $(loadMoreRelatedVideosCenter).eq(0).text();
+        let loadMoreRelatedVideosCenterText = $(loadMoreRelatedVideosCenter).eq(0).text().trim();
         await new Promise((resolve) => {
             let timer = setInterval(() => {
-                if (loadMoreRelatedVideosCenterText != $(loadMoreRelatedVideosCenter).eq(0).text()) {
+                if (loadMoreRelatedVideosCenterText != $(loadMoreRelatedVideosCenter).eq(0).text().trim()) {
                     clearInterval(timer);
                     resolve();
                     return;
@@ -59,6 +56,9 @@ funMap.set('/view_video.php', async () => {
                 }
                 global_module.clickElement(recommendedLoadMore.eq(0)[0]);
             }, 500);
+        });
+        $('html, body').animate({
+            scrollTop: playerDiv.offset().top
         });
         resolve();
     });
