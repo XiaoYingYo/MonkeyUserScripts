@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       *://www.pornhub.com/*
 // @grant       none
-// @version     1.0
+// @version     XiaoYing_2024.12.13.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -35,6 +35,30 @@ funMap.set('/view_video.php', async () => {
         let playerDiv = await global_module.waitForElement('div[id^="playerDiv"]', null, null, 100, -1);
         $('html, body').animate({
             scrollTop: playerDiv.offset().top
+        });
+        let loadMoreRelatedVideosCenter = await global_module.waitForElement('div[id="loadMoreRelatedVideosCenter"]', null, null, 100, -1);
+        let loadMoreRelatedVideosCenterText = $(loadMoreRelatedVideosCenter).eq(0).text();
+        await new Promise((resolve) => {
+            let timer = setInterval(() => {
+                if (loadMoreRelatedVideosCenterText != $(loadMoreRelatedVideosCenter).eq(0).text()) {
+                    clearInterval(timer);
+                    resolve();
+                    return;
+                }
+                global_module.clickElement(loadMoreRelatedVideosCenter.eq(0)[0]);
+            }, 500);
+        });
+        let recommendedLoadMore = await global_module.waitForElement('a[data-label="recommended_load_more"]', null, null, 100, -1);
+        let recommendedLoadMoreLabel = $(recommendedLoadMore).eq(0).attr('data-label');
+        await new Promise((resolve) => {
+            let timer = setInterval(() => {
+                if (recommendedLoadMoreLabel != $(recommendedLoadMore).eq(0).attr('data-label')) {
+                    clearInterval(timer);
+                    resolve();
+                    return;
+                }
+                global_module.clickElement(recommendedLoadMore.eq(0)[0]);
+            }, 500);
         });
         resolve();
     });
