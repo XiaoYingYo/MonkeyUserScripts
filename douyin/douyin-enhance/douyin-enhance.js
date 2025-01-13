@@ -4,7 +4,7 @@
 // @name:zh-TW   抖音增強
 // @namespace   Violentmonkey Scripts
 // @match       *://www.douyin.com/*
-// @version     XiaoYing_2024.09.09.2
+// @version     XiaoYing_2025.01.14.1
 // @grant       GM_info
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -32,6 +32,17 @@
 ajaxHooker.protect();
 var globalVariable = new Map();
 globalVariable.set('cacheVideoId', new Map());
+
+function initInjectCSS(id, css) {
+    if (document.getElementById(id)) {
+        return;
+    }
+    let style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = css;
+    style.id = id;
+    document.body.appendChild(style);
+}
 
 function handleText(Text) {
     let json = null;
@@ -154,5 +165,10 @@ function handleResponse(request) {
         return;
     }
 }
+
 // eslint-disable-next-line no-undef
 ajaxHooker.hook(handleResponse);
+(async () => {
+    await global_module.waitForElement('body', null, null, 200, -1);
+    initInjectCSS('xg-inner-controls', 'xg-inner-controls.xg-inner-controls{opacity: 1 !important};');
+})();
